@@ -2,10 +2,10 @@ import styles from './index.module.scss';
 import { BaseButton } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useRef, useEffect } from 'react';
-import { getFileName, IMAGE } from './utils';
+import { analyzeFiles } from './utils';
 import { toast } from 'sonner';
 
-export function FilePath() {
+export function FileAnalyze() {
   const [nameList, setNameList] = useState<string[]>([]);
   const [urlDir, setUrlDir] = useState<string[]>([]);
   const [imgDir, setImgDir] = useState<string[]>([]);
@@ -64,6 +64,8 @@ export function FilePath() {
     nameList.forEach(name => {
       copyText += name + '\n';
     });
+    copyText +=
+      '上面是一个视频教程的目录，你帮我总结一下大致内容，要求：分点总结，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球';
     try {
       await navigator.clipboard.writeText(copyText);
       toast.success('已复制');
@@ -76,13 +78,12 @@ export function FilePath() {
   return (
     <>
       <div className={styles.box} ref={boxRef}>
-        <h2>To TextHtml</h2>
+        <h2>File Analyze</h2>
         <div className="upload">
           <input
             type="file"
             className="file"
-            webkitdirectory=""
-            directory=""
+            {...{ webkitdirectory: '' }}
             onChange={onChangeFile}
           />
           <img src={uploadImg} alt="" />
@@ -175,41 +176,4 @@ function Checkbox({ checked, onChange, label }: CheckboxType) {
       <label htmlFor={label}>{label}</label>
     </div>
   );
-}
-
-function analyzeFiles(files: File[], isSuffix: boolean, isDir: boolean) {
-  const imgDir: string[] = [];
-  const urlDir: string[] = [];
-  const nameList: string[] = [];
-  const textDir: string[] = [];
-
-  files.forEach(file => {
-    if (file.name === '.DS_Store') return;
-    const [fileName = '', fileSuffix = ''] = getFileName(file.name);
-
-    if (IMAGE.includes(fileSuffix)) {
-      imgDir.push(file.webkitRelativePath);
-    } else if (fileSuffix === 'html') {
-      urlDir.push(file.webkitRelativePath);
-    } else if (fileSuffix === 'txt') {
-      textDir.push(file.webkitRelativePath);
-    } else if (!isDir) {
-      nameList.push(isSuffix ? file.name : fileName);
-    }
-    if (isDir) {
-      // 只处理一级目录
-      const dir = file.webkitRelativePath.split('/')[0];
-      const flag = nameList.some(name => dir === name);
-      if (!flag) {
-        nameList.push(dir);
-      }
-    }
-  });
-
-  return {
-    nameList,
-    urlDir,
-    imgDir,
-    textDir
-  };
 }

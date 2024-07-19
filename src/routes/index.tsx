@@ -1,7 +1,7 @@
 import { createHashRouter } from 'react-router-dom';
 import App from '../App';
 import ErrorPage from '../error-page';
-import { FilePath } from '../pages/file-path';
+import { FileAnalyze } from '../pages/file-analyze';
 
 const router = createHashRouter(
   [
@@ -11,8 +11,8 @@ const router = createHashRouter(
       errorElement: <ErrorPage />,
       children: [
         {
-          path: 'file-path',
-          element: <FilePath />
+          path: 'file-analyze',
+          element: <FileAnalyze />
         }
       ]
     }

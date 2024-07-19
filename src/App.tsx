@@ -13,7 +13,7 @@ function App() {
 
   useEffect(() => {
     if (pathname === '/') {
-      navigate('/file-path');
+      navigate('/file-analyze');
     }
   }, [pathname, navigate]);
 
@@ -25,8 +25,8 @@ function App() {
           <ul>
             <li>
               <Link
-                to={`/file-path`}
-                className={clsx(pathname === '/file-path' && 'active')}
+                to={`/file-analyze`}
+                className={clsx(pathname === '/file-analyze' && 'active')}
               >
                 <img className="nav-img" src={textHtmlUrl} alt="" />
                 <span>File Path</span>
