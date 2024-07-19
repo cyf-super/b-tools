@@ -1,0 +1,40 @@
+{
+  "name": "text-to-htmltext",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://cyf-super.github.io/ease-tools",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "is-hotkey": "^0.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.0",
+    "slate": "^0.101.1",
+    "slate-history": "^0.100.0",
+    "slate-react": "^0.101.3",
+    "sonner": "^1.2.4"
+  },
+  "devDependencies": {
+    "@types/is-hotkey": "^0.1.10",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "gh-pages": "^6.1.0",
+    "sass": "^1.69.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
+}

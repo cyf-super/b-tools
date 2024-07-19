@@ -1,0 +1,36 @@
+.toolbar {
+  position: relative;
+  padding: 1px 18px 17px;
+  margin: 0 -20px;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 20px;
+}
+
+.icon {
+  font-size: 18px;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: block;
+  width: 20px;
+  height: 20px;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.menu {
+  & > * {
+    display: inline-block;
+  }
+
+  & > * + * {
+    margin-left: 15px;
+  }
+}

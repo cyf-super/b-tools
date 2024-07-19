@@ -1,0 +1,25 @@
+.button {
+  width: 150px;
+  height: 48px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.25s ease 0s;
+  background-color: rgb(255, 255, 255);
+  color: rgb(99, 99, 136);
+  border: 1px solid rgb(187, 187, 222);
+
+  transition: transform 0.2s ease-in-out;
+  &:active {
+    transform: scale(0.8);
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
