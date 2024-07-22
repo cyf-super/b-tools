@@ -29,7 +29,7 @@ function App() {
                 className={clsx(pathname === '/file-analyze' && 'active')}
               >
                 <img className="nav-img" src={textHtmlUrl} alt="" />
-                <span>File Path</span>
+                <span>File Analyze</span>
               </Link>
             </li>
           </ul>

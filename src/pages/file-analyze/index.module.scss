@@ -40,16 +40,19 @@
       display: flex;
       margin-top: 10px;
       .left {
-        width: 50%;
+        width: 46vw;
         .copy {
           margin-block: 10px;
+          font-size: 22px;
+          padding-bottom: 10px;
         }
         .fileNum {
-          font-size: 18px;
+          font-size: 20px;
           margin: 0 0 10px 20px;
           font-weight: 500;
         }
         .item {
+          width: 100%;
           height: 40px;
           line-height: 40px;
           padding-left: 10px;
@@ -57,6 +60,10 @@
           border-radius: 5px;
           margin-bottom: 10px;
           box-shadow: 0px 0px 6px 0px #d4d3ff;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          // word-break: break-all;
+          white-space: nowrap;
         }
       }
       .right {
