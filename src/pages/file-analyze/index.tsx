@@ -81,7 +81,7 @@ export function FileAnalyze() {
       copyText += name + '\n';
     });
     copyText +=
-      '\n上面是一个视频教程的目录，你帮我总结一下大致内容，要求：分点总结，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球';
+      '\n上面是一个视频教程的目录，假如你是一个顶级的产品专家和营销专家，帮我总结一下大致内容，要求：分点总结，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球';
     try {
       await navigator.clipboard.writeText(copyText);
       toast.success('已复制');
