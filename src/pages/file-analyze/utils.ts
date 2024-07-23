@@ -1,4 +1,4 @@
-export const IMAGE = [
+const IMAGE = [
   'bmp',
   'jpg',
   'png',
@@ -22,6 +22,10 @@ export const IMAGE = [
   'avif',
   'apng'
 ];
+
+const ZIP = ['zip', 'exe', 'rar', '7z', 'tar'];
+
+const HREF = ['html', 'url'];
 
 export function getFileName(webkitRelativePath: string) {
   const nameArr = webkitRelativePath.split('.');
@@ -47,6 +51,8 @@ export function analyzeFiles(
   const urlDir: string[] = [];
   const nameList: string[] = [];
   const textDir: string[] = [];
+  const zipDir: string[] = [];
+  const setType = new Set<string>();
 
   files.forEach(file => {
     if (file.name === '.DS_Store') return;
@@ -55,10 +61,13 @@ export function analyzeFiles(
       fileName,
       suffix: fileSuffix
     } = getFileName(file.webkitRelativePath);
+    setType.add(fileSuffix);
 
     if (IMAGE.includes(fileSuffix)) {
       imgDir.push(file.webkitRelativePath);
-    } else if (fileSuffix === 'html') {
+    } else if (ZIP.includes(fileSuffix)) {
+      zipDir.push(file.webkitRelativePath);
+    } else if (HREF.includes(fileSuffix)) {
       urlDir.push(file.webkitRelativePath);
     } else if (fileSuffix === 'txt') {
       textDir.push(file.webkitRelativePath);
@@ -84,9 +93,11 @@ export function analyzeFiles(
 
   return {
     nameList: nameList.sort(naturalSort),
+    typeList: [...setType].sort(naturalSort),
     urlDir: urlDir.sort(naturalSort),
     imgDir: imgDir.sort(naturalSort),
-    textDir: textDir.sort(naturalSort)
+    textDir: textDir.sort(naturalSort),
+    zipDir: textDir.sort(naturalSort)
   };
 }
 

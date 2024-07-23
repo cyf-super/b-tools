@@ -4,12 +4,15 @@ import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { analyzeFiles } from './utils';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function FileAnalyze() {
   const [nameList, setNameList] = useState<string[]>([]);
+  const [typeList, setTypeList] = useState<string[]>([]);
   const [urlDir, setUrlDir] = useState<string[]>([]);
   const [imgDir, setImgDir] = useState<string[]>([]);
   const [textDir, setTextDir] = useState<string[]>([]);
+  const [zipDir, setZipDir] = useState<string[]>([]);
 
   const [suffix, setSuffix] = useState(true);
   const [onlyDir, setOnlyDir] = useState(false);
@@ -70,9 +73,11 @@ export function FileAnalyze() {
       isAddSubDir: subDir
     });
     setNameList(info.nameList);
+    setTypeList(info.typeList);
     setImgDir(info.imgDir);
     setUrlDir(info.urlDir);
     setTextDir(info.textDir);
+    setZipDir(info.zipDir);
   }
 
   const onCopy = async () => {
@@ -81,7 +86,7 @@ export function FileAnalyze() {
       copyText += name + '\n';
     });
     copyText +=
-      '\n上面是一个视频教程的目录，假如你是一个顶级的产品专家和营销专家，帮我总结一下大致内容，要求：分点总结，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球';
+      '\n上面是一个视频教程的目录，你是一个顶级的产品专家和营销专家，帮我总结一下大致内容，要求：分点总结，简单易懂，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球，可以有多种风格，比如幽默、励志、文艺风等等';
     try {
       await navigator.clipboard.writeText(copyText);
       toast.success('已复制');
@@ -89,6 +94,12 @@ export function FileAnalyze() {
       console.error('Failed to copy: ', err);
       toast.error('复制失败');
     }
+  };
+
+  const onDelete = (index: number) => {
+    const newList = [...nameList];
+    newList.splice(index, 1);
+    setNameList(newList);
   };
 
   return (
@@ -108,19 +119,39 @@ export function FileAnalyze() {
 
         <div className="content">
           <div className="left">
-            <BaseButton
-              className="copy"
-              disabled={nameList.length === 0}
-              onClick={onCopy}
-            >
-              copy
-            </BaseButton>
-            <span className="fileNum">文件数量：{nameList.length}</span>
-            {nameList.map(name => (
-              <div key={name} className="item">
-                {name}
+            <div className="header">
+              <BaseButton
+                className="copy"
+                disabled={nameList.length === 0}
+                onClick={onCopy}
+              >
+                copy
+              </BaseButton>
+              <div className="fileNum">文件数量：{nameList.length}</div>
+              <div className="typeNum" title={typeList.join(',')}>
+                文件种类：{typeList.length}
               </div>
-            ))}
+              <div className="typeWarn">{typeList.join(', ')}</div>
+            </div>
+            <motion.ul layout layoutId={'list'} className="list-container">
+              <AnimatePresence>
+                {nameList.map((name, index) => (
+                  <motion.li
+                    initial={{ y: -200, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    key={name}
+                    className="item"
+                  >
+                    {name}
+                    <span
+                      className="delIcon"
+                      onClick={() => onDelete(index)}
+                    ></span>
+                  </motion.li>
+                ))}
+              </AnimatePresence>
+            </motion.ul>
           </div>
           <div className="right">
             <div className="suffix">
@@ -144,15 +175,21 @@ export function FileAnalyze() {
                 onChange={setOnlyDir}
               />
             </div>
+            <div className="zipList">
+              <p className={zipDir.length ? 'warning' : ''}>
+                是否有压缩文件{zipDir.length ? `【${zipDir.length}】` : ''}
+              </p>
 
+              {zipDir.map(name => (
+                <div key={name} className="dir"></div>
+              ))}
+            </div>
             <div className="textList">
               <p className={textDir.length ? 'warning' : ''}>
                 是否有txt文件{textDir.length ? `【${textDir.length}】` : ''}
               </p>
-              {textDir.map(dir => (
-                <div key={dir} className="dir">
-                  {dir}
-                </div>
+              {textDir.map(name => (
+                <div key={name} className="dir"></div>
               ))}
             </div>
             <div className="urlList">
