@@ -31,6 +31,13 @@ function App() {
                 <img className="nav-img" src={textHtmlUrl} alt="" />
                 <span>File Analyze</span>
               </Link>
+              <Link
+                to={`/generate-picture`}
+                className={clsx(pathname === '/generate-picture' && 'active')}
+              >
+                <img className="nav-img" src={textHtmlUrl} alt="" />
+                <span>Generate Picture</span>
+              </Link>
             </li>
           </ul>
         </nav>

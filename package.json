@@ -14,6 +14,7 @@
   "dependencies": {
     "clsx": "^2.0.0",
     "framer-motion": "^11.3.8",
+    "html-to-image": "^1.11.11",
     "is-hotkey": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,7 +22,8 @@
     "slate": "^0.101.1",
     "slate-history": "^0.100.0",
     "slate-react": "^0.101.3",
-    "sonner": "^1.2.4"
+    "sonner": "^1.2.4",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/is-hotkey": "^0.1.10",

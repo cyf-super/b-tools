@@ -6,7 +6,7 @@ const url = new URL('/header/1F4A9_color.png', import.meta.url).href;
 export function Header() {
   const navigate = useNavigate();
   const onClickHeader = () => {
-    navigate('/to-text-html');
+    navigate('/file-analyze');
   };
   return (
     <div className={styles.header} onClick={onClickHeader}>

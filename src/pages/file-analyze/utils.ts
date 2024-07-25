@@ -1,31 +1,4 @@
-const IMAGE = [
-  'bmp',
-  'jpg',
-  'png',
-  'tif',
-  'gif',
-  'pcx',
-  'tga',
-  'exif',
-  'fpx',
-  'svg',
-  'psd',
-  'cdr',
-  'pcd',
-  'dxf',
-  'ufo',
-  'eps',
-  'ai',
-  'raw',
-  'WMF',
-  'webp',
-  'avif',
-  'apng'
-];
-
-const ZIP = ['zip', 'exe', 'rar', '7z', 'tar'];
-
-const HREF = ['html', 'url'];
+import { HREF, IMAGE, ZIP, sort } from '@/utils';
 
 export function getFileName(webkitRelativePath: string) {
   const nameArr = webkitRelativePath.split('.');
@@ -102,33 +75,9 @@ export function analyzeFiles(
 }
 
 // 自然排序函数
-function naturalSort(a: string, b: string) {
+export function naturalSort(a: string, b: string) {
   const regex = /(\d+|\D+)/g; // 匹配数字和非数字部分
   const partsA = a.match(regex)!;
   const partsB = b.match(regex)!;
-
-  for (let i = 0; i < Math.min(partsA.length, partsB.length); i++) {
-    const partA = partsA[i];
-    const partB = partsB[i];
-
-    // 如果都是数字，进行数值比较
-    if (
-      !isNaN(partA as unknown as number) &&
-      !isNaN(partB as unknown as number)
-    ) {
-      const numA = parseFloat(partA);
-      const numB = parseFloat(partB);
-      if (numA !== numB) {
-        return numA - numB;
-      }
-    } else {
-      // 否则进行字符串比较
-      const comparison = partA.localeCompare(partB);
-      if (comparison !== 0) {
-        return comparison;
-      }
-    }
-  }
-
-  return partsA.length - partsB.length; // 如果一方更长，排在后面
+  return sort(partsA, partsB);
 }

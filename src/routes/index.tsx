@@ -2,6 +2,7 @@ import { createHashRouter } from 'react-router-dom';
 import App from '../App';
 import ErrorPage from '../error-page';
 import { FileAnalyze } from '../pages/file-analyze';
+import { GeneratePicture } from '../pages/generate-picture';
 
 const router = createHashRouter(
   [
@@ -13,6 +14,10 @@ const router = createHashRouter(
         {
           path: 'file-analyze',
           element: <FileAnalyze />
+        },
+        {
+          path: 'generate-picture',
+          element: <GeneratePicture />
         }
       ]
     }

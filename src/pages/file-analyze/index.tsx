@@ -5,8 +5,10 @@ import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { analyzeFiles } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { folderStore } from '../../store';
 
 export function FileAnalyze() {
+  const { files, setFiles } = folderStore();
   const [nameList, setNameList] = useState<string[]>([]);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [urlDir, setUrlDir] = useState<string[]>([]);
@@ -18,7 +20,6 @@ export function FileAnalyze() {
   const [onlyDir, setOnlyDir] = useState(false);
   const [subDir, setSubDir] = useState(true);
 
-  const filesRef = useRef<File[]>([]);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -32,25 +33,24 @@ export function FileAnalyze() {
   }, [boxRef]);
 
   useEffect(() => {
-    if (filesRef.current.length) {
-      transform(filesRef.current, { suffix, onlyDir, subDir });
+    if (files.length) {
+      transform(files, { suffix, onlyDir, subDir });
     }
-  }, [suffix, onlyDir, subDir]);
+  }, [suffix, onlyDir, subDir, files]);
 
   const handlePaste = (event: any) => {
     event.preventDefault();
     const files = event.clipboardData.files;
     transform([...files], { suffix, onlyDir, subDir });
-    filesRef.current = [...files];
+    setFiles([...files]);
   };
 
   const onChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    filesRef.current = [];
+    setFiles([]);
 
     if (!files) return;
-    transform([...files], { suffix, onlyDir, subDir });
-    filesRef.current = [...files];
+    setFiles([...files]);
     e.target.value = '';
     toast.success('上传成功');
   };
@@ -114,7 +114,7 @@ export function FileAnalyze() {
             onChange={onChangeFile}
           />
           <img src={uploadImg} alt="" />
-          <div className="text">将图片拖到此处，或点击上传</div>
+          <div className="text">将文件夹拖到此处，或点击上传</div>
         </div>
 
         <div className="content">
