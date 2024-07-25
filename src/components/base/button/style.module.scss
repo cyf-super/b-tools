@@ -4,7 +4,7 @@
   padding-left: 8px;
   padding-right: 8px;
   border-radius: 24px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   outline: none;
@@ -23,4 +23,9 @@
 .disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+.primary {
+  background-color: #1b87eb;
+  color: #fff;
 }

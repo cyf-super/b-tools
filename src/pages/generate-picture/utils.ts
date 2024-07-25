@@ -1,3 +1,4 @@
+import { toPng } from 'html-to-image';
 import { IMAGE, PDF, PPT, VIDEO, VOICE, WORD, ZIP, sort } from '@/utils';
 import { Item } from '.';
 import { naturalSort } from '../file-analyze/utils';
@@ -85,3 +86,26 @@ export function download(image: string, name: string) {
   link.click();
   document.body.removeChild(link);
 }
+
+export async function generateImg(width = 375) {
+  const node = document.getElementById('list') as HTMLElement;
+  return toPng(node, {
+    width,
+    quality: 1,
+    pixelRatio: 2
+  });
+}
+
+/**
+ * 获取分割图片的尺寸
+ * @param length 元素的数量
+ * @param size 图片的长度（item数量）
+ * @returns
+ */
+export function getSplitArr(length: number, size: number) {
+  const arr = getArr(length);
+  const sizeArr = getArr(Math.ceil(length / size));
+  return sizeArr.map(num => arr.slice(num * size, (num + 1) * size));
+}
+
+const getArr = (length: number) => Array.from({ length }, (_, index) => index);

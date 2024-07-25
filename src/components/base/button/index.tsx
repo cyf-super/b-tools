@@ -5,18 +5,25 @@ import clsx from 'clsx';
 
 type ButtonType = PropsWithChildren<{
   disabled?: boolean;
+  primary?: boolean;
 }> &
   BaseProps;
 
 export const BaseButton = function ({
   className,
   disabled,
+  primary = false,
   ...props
 }: ButtonType) {
   return (
     <button
       {...props}
-      className={clsx(styles.button, className, disabled && styles.disabled)}
+      className={clsx(
+        styles.button,
+        className,
+        disabled && styles.disabled,
+        primary && styles.primary
+      )}
       style={{}}
     ></button>
   );
