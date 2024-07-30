@@ -3,28 +3,28 @@ import App from '../App';
 import ErrorPage from '../error-page';
 import { FileAnalyze } from '../pages/file-analyze';
 import { GeneratePicture } from '../pages/generate-picture';
+import { SlicePicture } from '../pages/slice-picture';
 
-const router = createHashRouter(
-  [
-    {
-      path: '/:id?',
-      element: <App />,
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          path: 'file-analyze',
-          element: <FileAnalyze />
-        },
-        {
-          path: 'generate-picture',
-          element: <GeneratePicture />
-        }
-      ]
-    }
-  ],
+const router = createHashRouter([
   {
-    // basename: '/ease-tools'
+    path: '/:id?',
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'file-analyze',
+        element: <FileAnalyze />
+      },
+      {
+        path: 'generate-picture',
+        element: <GeneratePicture />
+      },
+      {
+        path: 'slice-picture',
+        element: <SlicePicture />
+      }
+    ]
   }
-);
+]);
 
 export { router };

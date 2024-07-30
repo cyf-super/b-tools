@@ -4,8 +4,25 @@ import { Header } from './pages/header';
 import { Toaster } from 'sonner';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
+import fileAnalyzeSrc from '/sider/textHtml.svg';
 
-const textHtmlUrl = new URL('/sider/textHtml.svg', import.meta.url).href;
+const linkList = [
+  {
+    name: 'File Analyze',
+    image: fileAnalyzeSrc,
+    router: '/file-analyze'
+  },
+  {
+    name: 'Generate Picture',
+    image: fileAnalyzeSrc,
+    router: '/generate-picture'
+  },
+  {
+    name: 'Slice Picture',
+    image: fileAnalyzeSrc,
+    router: '/slice-picture'
+  }
+];
 
 function App() {
   const { pathname } = useLocation();
@@ -24,20 +41,15 @@ function App() {
         <nav className="nav">
           <ul>
             <li>
-              <Link
-                to={`/file-analyze`}
-                className={clsx(pathname === '/file-analyze' && 'active')}
-              >
-                <img className="nav-img" src={textHtmlUrl} alt="" />
-                <span>File Analyze</span>
-              </Link>
-              <Link
-                to={`/generate-picture`}
-                className={clsx(pathname === '/generate-picture' && 'active')}
-              >
-                <img className="nav-img" src={textHtmlUrl} alt="" />
-                <span>Generate Picture</span>
-              </Link>
+              {linkList.map(item => (
+                <Link
+                  to={item.router}
+                  className={clsx(pathname === item.router && 'active')}
+                >
+                  <img className="nav-img" src={item.image} alt="" />
+                  <span>{item.name}</span>
+                </Link>
+              ))}
             </li>
           </ul>
         </nav>

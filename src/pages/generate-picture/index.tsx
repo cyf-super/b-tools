@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import { BaseButton, Checkbox } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useEffect } from 'react';
-import { analyzeFiles, download, generateImg, getSplitArr } from './utils';
+import { analyzeFiles, download, generateImg, getArr } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { folderStore } from '../../store';
@@ -24,16 +24,20 @@ export function GeneratePicture() {
   const { files, setFiles } = folderStore();
   const [nameList, setNameList] = useState<Item[]>([]);
   const [dirList, setDirList] = useState<Item[]>([]);
-  const [typeList, setTypeList] = useState<string[]>([]);
+  const [typeList, setTypeList] = useState<string[]>(['文件夹']);
   const [selectTypeList, setSelectTypeList] = useState<string[]>([
     'mp4',
     '文件夹'
   ]);
   const [selectNameList, setSelectNameList] = useState<Item[]>([]);
+  const [splitList, setSplitList] = useState<Item[][]>([]);
   const [isDownloading, setDownloadStatus] = useState(false);
   // const [isGenerating, setIsGenerating] = useState(false);
 
   const [dataUrl, setDataUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [watermark, setWatermark] = useState('');
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectSize, setSelectSize] = useState(375);
   const [isSplitimg, setIsSplitimg] = useState(false);
@@ -53,6 +57,14 @@ export function GeneratePicture() {
       transform(files);
     }
   }, [files]);
+
+  useEffect(() => {
+    const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
+    const splitList = sizeArr.map(num =>
+      selectNameList.slice(num * SPLIT_SIZE, (num + 1) * SPLIT_SIZE)
+    );
+    setSplitList(splitList);
+  }, [selectNameList]);
 
   useEffect(() => {
     if (selectTypeList.length) {
@@ -109,21 +121,19 @@ export function GeneratePicture() {
   const downloadAsImage = async () => {
     setDownloadStatus(true);
     if (isSplitimg && selectNameList.length > SPLIT_SIZE) {
-      const splitArr = getSplitArr(selectNameList.length, SPLIT_SIZE);
-      console.log('splitArr ', splitArr);
-      // splitArr.forEach(async arr => {
-      //   const dataUrl = await generateImg(arr, selectSize);
-      //   download(dataUrl, '详情.png');
-      // });
-      const dataUrl = await generateImg(selectSize);
-      download(dataUrl, '详情.png');
+      const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
+      sizeArr.forEach(async id => {
+        const dataUrl = await generateImg(selectSize, 'list-' + id);
+        download(dataUrl, '详情.png');
+      });
     } else if (dataUrl) {
       download(dataUrl, '详情.png');
+      toast('下载成功');
     } else {
       await generateImgUrl();
       download(imgSizeMap[selectSize], '详情.png');
+      toast('下载成功');
     }
-    toast('下载成功');
     setDownloadStatus(false);
   };
 
@@ -182,10 +192,10 @@ export function GeneratePicture() {
               </BaseButton>
             </div>
             <div className="fileDetail">
-              <div className="fileNum">文件数量：{nameList.length}</div>
-              <div className="typeNum" title={typeList.join(',')}>
+              <span className="fileNum">文件数量：{nameList.length}</span>
+              <span className="typeNum" title={typeList.join(',')}>
                 文件种类：{typeList.length - 1}
-              </div>
+              </span>
             </div>
             <div className="options">
               {typeList.map(type => (
@@ -197,33 +207,58 @@ export function GeneratePicture() {
                 </span>
               ))}
             </div>
+            <div className="input">
+              <div className="titleInput">
+                title：
+                <input
+                  type="text"
+                  placeholder="标题"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="watermarkInput">
+                watermark：
+                <input
+                  type="text"
+                  placeholder="水印"
+                  value={watermark}
+                  onChange={e => setWatermark(e.target.value)}
+                />
+              </div>
+            </div>
             <motion.ul
               layout
               layoutId={'list'}
               className="list-container"
               id="list"
-              style={selectNameList.length ? { marginBlock: '20px' } : {}}
             >
               <AnimatePresence>
-                {selectNameList.map((item, index) => (
-                  <motion.li
-                    initial={{ y: -200, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    key={item.name}
-                    data-id={index}
-                    className="item"
-                  >
-                    <div className="fileName" data-id={index}>
-                      <img src={item.image} alt="" />
-                      {item.name}
-                    </div>
-                    <div
-                      className="delIcon"
-                      onClick={() => onDelete(index)}
-                      data-id={index}
-                    ></div>
-                  </motion.li>
+                {title && <p className="imgTitle">{title}</p>}
+                {watermark && <p className="watermark">{watermark}</p>}
+                {splitList.map((nameArr, index) => (
+                  <div className="" id={'list-' + index} key={index}>
+                    {nameArr.map((item, index) => (
+                      <motion.li
+                        initial={{ y: -200, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        key={item.name}
+                        data-id={index}
+                        className="item"
+                      >
+                        <div className="fileName" data-id={index}>
+                          <img src={item.image} alt="" />
+                          {item.name}
+                        </div>
+                        <div
+                          className="delIcon"
+                          onClick={() => onDelete(index)}
+                          data-id={index}
+                        ></div>
+                      </motion.li>
+                    ))}
+                  </div>
                 ))}
               </AnimatePresence>
             </motion.ul>
@@ -232,7 +267,7 @@ export function GeneratePicture() {
             <Checkbox
               checked={isSplitimg}
               onChange={setIsSplitimg}
-              label="是否分割图片"
+              label="分割图片"
             ></Checkbox>
             <SelectBox value={selectSize} onSelect={setSelectSize} />
           </section>
@@ -254,7 +289,14 @@ export function GeneratePicture() {
           </BaseButton>
         }
       >
-        <SelectBox value={selectSize} onSelect={setSelectSize} />
+        <div>
+          <Checkbox
+            checked={isSplitimg}
+            onChange={setIsSplitimg}
+            label="分割图片"
+          ></Checkbox>
+          <SelectBox value={selectSize} onSelect={setSelectSize} />
+        </div>
       </PreviewModal>
     </>
   );

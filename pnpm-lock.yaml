@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@cyf-super/reset-css':
+    specifier: ^0.0.1
+    version: 0.0.1
   clsx:
     specifier: ^2.0.0
     version: registry.npmmirror.com/clsx@2.1.0
@@ -84,6 +87,10 @@ devDependencies:
     version: registry.npmmirror.com/vite@5.0.12(sass@1.70.0)
 
 packages:
+
+  /@cyf-super/reset-css@0.0.1:
+    resolution: {integrity: sha512-WezeAkcs+f6EEknaGt8sZJhaeEIXNTnyJVHohEY+Zt1mnhlLqkj61lGsrSFG8xldI3YSY/Tt9EKr7w+2QA9d9Q==}
+    dev: false
 
   /@esbuild/aix-ppc64@0.19.11:
     resolution: {integrity: sha512-FnzU0LyE3ySQk7UntJO4+qIiQgI7KoODnZg5xzXIrFJlKd2P2gwHsHY4927xj9y5PJmJSzULiUCWmv7iWnNa7g==}

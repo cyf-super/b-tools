@@ -81,25 +81,67 @@
             background: #8aa4fc;
           }
         }
+        .input {
+          display: flex;
+          align-items: center;
+          font-size: 16px;
+          .titleInput {
+            margin-right: 10px;
+          }
+          input {
+            width: 200px;
+            height: 30px;
+            border: 0.5px solid #8aa4fc;
+            outline: none;
+            border-radius: 6px;
+            padding-inline: 5px;
+            font-size: 16px;
+            &::placeholder {
+              color: #dcdcdc;
+            }
+          }
+        }
         ul {
+          position: relative;
           // box-shadow: 0px 0px 6px 0px #d4d3ff;
           background: #fff;
-          // width: 750px;
+          // margin: -10px 0 0 -35px;
+          padding: 0;
+          & > div {
+            background: #fff;
+            padding-left: 5px;
+            &:last-child {
+              padding-bottom: 5px;
+            }
+            &:first-child {
+              padding-top: 5px;
+            }
+          }
+          .imgTitle {
+            font-size: 24px;
+            padding-block: 12px 6px;
+            // font-weight: 700;
+            font-weight: 700;
+            margin-left: 10px;
+          }
+          .watermark {
+            position: absolute;
+            right: 5px;
+            top: 2px;
+            font-size: 13px;
+            font-style: italic;
+          }
         }
         .item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          width: 100%;
-          height: 35px;
+          width: 96%;
+          height: 30px;
           padding-inline: 10px;
-          // border: 0.5px solid #c7c7c7;
           border-radius: 5px;
-          margin: 0 0 10px -35px;
+          margin: 5px 0 5px 0;
           font-size: 16px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
 
           .fileName {
             display: flex;
@@ -109,74 +151,22 @@
               margin-right: 7px;
             }
           }
-          &:hover .delIcon {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background: url(./img/delete1.png) center/100% 100% no-repeat;
-            cursor: pointer;
-          }
-          &:last-child {
-            padding-bottom: 20px;
-          }
-          &:first-child {
-            padding-top: 10px;
+          &:hover {
+            background: #f1f1f1;
+            .delIcon {
+              display: inline-block;
+              width: 24px;
+              height: 24px;
+              margin-right: 20px;
+              background: url(./img/delete.png) center/100% 100% no-repeat;
+              cursor: pointer;
+              z-index: 100;
+            }
           }
         }
       }
       .right {
         margin: 10px 0px 10px 50px;
-        p {
-          display: flex;
-          align-items: center;
-          width: 300px;
-          height: 40px;
-          background: #fff;
-          box-shadow: 0px 0px 6px 0px #d4d3ff;
-          padding-left: 5px;
-          border-radius: 6px;
-          &::before {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-right: 4 px;
-          }
-        }
-        .dir {
-          margin: 5px 8px;
-        }
-        .zipList {
-          margin-top: 5px;
-          p::before {
-            background: url(./img/zip.png) center/100% 100% no-repeat;
-            margin-right: 5px;
-          }
-        }
-        .imageList {
-          margin-top: 5px;
-          p::before {
-            background: url(./img/image.png) center/100% 100% no-repeat;
-            margin-right: 5px;
-          }
-        }
-        .textList {
-          margin-top: 5px;
-          p::before {
-            background: url(./img/text.png) center/100% 100% no-repeat;
-            margin-right: 5px;
-          }
-        }
-        .urlList {
-          margin-top: 5px;
-          p::before {
-            background: url(./img/url.png) center/100% 100% no-repeat;
-            margin-right: 5px;
-          }
-        }
-        .warning {
-          background: rgb(255, 109, 109);
-        }
       }
     }
     .btn {
@@ -207,8 +197,6 @@
   color: #8aa4fc;
   border-radius: 8px;
   margin-top: 16px;
-  .selectOption {
-  }
 }
 
 .modal {
@@ -256,7 +244,7 @@
       display: flex;
       flex-grow: 1;
       width: 100%;
-
+      overflow-y: scroll;
       .left {
         width: 80%;
         height: 470px;
@@ -265,10 +253,9 @@
         margin-right: 20px;
         background: #c7d4ff;
         border-radius: 8px;
+        overflow-y: scroll;
         img {
           width: 100%;
-          height: 100%;
-          object-fit: contain;
           box-shadow: 0px 0px 6px 0px #d4d3ff;
         }
         .loading {
