@@ -7,27 +7,38 @@ type SelectBoxType = {
     value: number;
     label: string;
   }[];
+  label?: string;
 };
 
-export function SelectBox({ value, onSelect, OPTIONS }: SelectBoxType) {
+export function SelectBox({ value, onSelect, OPTIONS, label }: SelectBoxType) {
   return (
-    <select
-      onChange={e => onSelect(+e.target.value)}
-      onClick={e => {
-        e.stopPropagation();
-      }}
-      defaultValue={375}
-      className={styles.select}
-    >
-      {OPTIONS.map(item => (
-        <option
-          value={item.value}
-          selected={item.value === value}
-          className={styles.selectOption}
-        >
-          {item.label}
-        </option>
-      ))}
-    </select>
+    <div className={styles.selectBox}>
+      {label && (
+        <>
+          <span className={styles.icon}></span>
+          <label htmlFor={label}>{label}</label>
+        </>
+      )}
+      <select
+        id={label}
+        onChange={e => onSelect(+e.target.value)}
+        onClick={e => {
+          e.stopPropagation();
+        }}
+        defaultValue={value}
+        className={styles.select}
+      >
+        {OPTIONS.map(item => (
+          <option
+            key={item.value}
+            value={item.value}
+            selected={item.value === value}
+            className={styles.selectOption}
+          >
+            {item.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

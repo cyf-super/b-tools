@@ -1,12 +1,14 @@
 import styles from './index.module.scss';
-import { BaseButton, Checkbox } from '@/components';
+import { BaseButton, Checkbox, SelectBox } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useEffect } from 'react';
-import { analyzeFiles, download, generateImg, getArr } from './utils';
+import { analyzeFiles, generateImg, getArr } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { folderStore } from '../../store';
 import PreviewModal from './previewModal';
+import { download, getBase64ImageSize } from '@/utils';
+import { formatBytes } from '../slice-picture/utils';
 
 export interface Item {
   name: string;
@@ -14,8 +16,12 @@ export interface Item {
   image: string;
 }
 
-const OPTIONS = [320, 375, 425, 475, 525, 575, 625, 675];
-const SPLIT_SIZE = 30;
+const options = [325, 375, 425, 450, 475, 525, 575, 625, 675];
+const OPTIONS = options.map(width => ({
+  value: width,
+  label: `宽度: ${width}px`
+}));
+const SPLIT_SIZE = 25;
 const imgSizeMap: {
   [key: string]: string;
 } = {};
@@ -39,12 +45,14 @@ export function GeneratePicture() {
   const [watermark, setWatermark] = useState('');
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [selectSize, setSelectSize] = useState(375);
-  const [isSplitimg, setIsSplitimg] = useState(false);
+  const [selectSize, setSelectSize] = useState(450);
+  const [isSplitimg, setIsSplitimg] = useState(true);
+  const [isThirtDir, setIsThirtDir] = useState(false);
 
   useEffect(() => {
-    if (imgSizeMap[selectSize]) {
-      setDataUrl(imgSizeMap[selectSize]);
+    const key = selectSize + selectTypeList.join('');
+    if (imgSizeMap[key]) {
+      setDataUrl(imgSizeMap[key]);
     } else {
       setDataUrl('');
       previewOpen && generateImgUrl();
@@ -56,7 +64,7 @@ export function GeneratePicture() {
     if (files.length) {
       transform(files);
     }
-  }, [files]);
+  }, [files, isThirtDir]);
 
   useEffect(() => {
     const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
@@ -64,6 +72,8 @@ export function GeneratePicture() {
       selectNameList.slice(num * SPLIT_SIZE, (num + 1) * SPLIT_SIZE)
     );
     setSplitList(splitList);
+    const key = selectSize + selectTypeList.join('');
+    imgSizeMap[key] && setDataUrl(imgSizeMap[key]);
   }, [selectNameList]);
 
   useEffect(() => {
@@ -72,6 +82,7 @@ export function GeneratePicture() {
       if (selectTypeList.includes('文件夹')) {
         list = [...dirList, ...list];
       }
+      list.sort();
       setSelectNameList(list);
     } else {
       setSelectNameList(nameList);
@@ -90,7 +101,9 @@ export function GeneratePicture() {
   };
 
   function transform(files: File[]) {
-    const info = analyzeFiles(files);
+    const info = analyzeFiles(files, {
+      isThirtDir
+    });
     setNameList(info.nameList);
     setTypeList(['文件夹', ...info.typeList]);
     setDirList(info.dirList);
@@ -115,6 +128,7 @@ export function GeneratePicture() {
     } else {
       newList.push(type);
     }
+    newList.sort();
     setSelectTypeList(newList);
   };
 
@@ -131,7 +145,8 @@ export function GeneratePicture() {
       toast('下载成功');
     } else {
       await generateImgUrl();
-      download(imgSizeMap[selectSize], '详情.png');
+      const key = selectSize + selectTypeList.join('');
+      download(imgSizeMap[key], '详情.png');
       toast('下载成功');
     }
     setDownloadStatus(false);
@@ -144,17 +159,23 @@ export function GeneratePicture() {
 
   const generateImgUrl = async () => {
     try {
-      if (!imgSizeMap[selectSize]) {
+      const key = selectSize + selectTypeList.join('');
+      console.log(imgSizeMap, imgSizeMap[key]);
+      if (!imgSizeMap[key]) {
         // setIsGenerating(true);
         const dataUrl = await generateImg(selectSize);
         setDataUrl(dataUrl);
-        imgSizeMap[selectSize] = dataUrl;
+        imgSizeMap[key] = dataUrl;
       }
     } catch (error) {
       toast.error('加载失败');
     } finally {
       // setIsGenerating(false);
     }
+  };
+
+  const onReset = () => {
+    transform(files);
   };
 
   return (
@@ -178,9 +199,16 @@ export function GeneratePicture() {
               <BaseButton
                 className="preview"
                 disabled={nameList.length === 0 || isDownloading}
+                onClick={onReset}
+              >
+                Reset
+              </BaseButton>
+              <BaseButton
+                className="preview"
+                disabled={nameList.length === 0 || isDownloading}
                 onClick={onPreview}
               >
-                preview
+                Preview
               </BaseButton>
               <BaseButton
                 className="download"
@@ -235,26 +263,25 @@ export function GeneratePicture() {
             >
               <AnimatePresence>
                 {title && <p className="imgTitle">{title}</p>}
-                {watermark && <p className="watermark">{watermark}</p>}
+
                 {splitList.map((nameArr, index) => (
                   <div className="" id={'list-' + index} key={index}>
+                    {watermark && <p className="watermark">{watermark}</p>}
                     {nameArr.map((item, index) => (
                       <motion.li
                         initial={{ y: -200, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ opacity: 0 }}
                         key={item.name}
-                        data-id={index}
                         className="item"
                       >
-                        <div className="fileName" data-id={index}>
+                        <div className="fileName">
                           <img src={item.image} alt="" />
                           {item.name}
                         </div>
                         <div
                           className="delIcon"
                           onClick={() => onDelete(index)}
-                          data-id={index}
                         ></div>
                       </motion.li>
                     ))}
@@ -269,7 +296,17 @@ export function GeneratePicture() {
               onChange={setIsSplitimg}
               label="分割图片"
             ></Checkbox>
-            <SelectBox value={selectSize} onSelect={setSelectSize} />
+            <Checkbox
+              checked={isThirtDir}
+              onChange={setIsThirtDir}
+              label="只针对二级目录"
+            ></Checkbox>
+            <SelectBox
+              value={selectSize}
+              onSelect={setSelectSize}
+              OPTIONS={OPTIONS}
+              label="图片宽度： "
+            />
           </section>
         </section>
       </main>
@@ -295,38 +332,17 @@ export function GeneratePicture() {
             onChange={setIsSplitimg}
             label="分割图片"
           ></Checkbox>
-          <SelectBox value={selectSize} onSelect={setSelectSize} />
+          <SelectBox
+            value={selectSize}
+            onSelect={setSelectSize}
+            OPTIONS={OPTIONS}
+          />
+
+          <div className={styles.size}>
+            大小: {dataUrl && formatBytes(getBase64ImageSize(dataUrl))}
+          </div>
         </div>
       </PreviewModal>
     </>
-  );
-}
-
-function SelectBox({
-  value,
-  onSelect
-}: {
-  value: number;
-  onSelect: (num: number) => void;
-}) {
-  return (
-    <select
-      onChange={e => onSelect(+e.target.value)}
-      onClick={e => {
-        e.stopPropagation();
-      }}
-      defaultValue={375}
-      className={styles.select}
-    >
-      {OPTIONS.map(size => (
-        <option
-          value={size}
-          selected={size === value}
-          className={styles.selectOption}
-        >
-          宽度: {size}px
-        </option>
-      ))}
-    </select>
   );
 }

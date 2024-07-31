@@ -49,3 +49,20 @@ export const VOICE = ['mp3', 'mp2', 'mp1', 'wav'];
 export const PPT = ['ppt', 'pptx'];
 export const WORD = ['docx', 'doc', 'docx'];
 export const PDF = ['pdf'];
+
+export function download(image: string, name: string) {
+  const link = document.createElement('a');
+  link.href = image;
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// 计算base64编码图片大小
+export function getBase64ImageSize(base64: string) {
+  if (!base64) return 0;
+  const str = atob(base64.split(',')[1]);
+  const bytes = str.length;
+  return bytes;
+}

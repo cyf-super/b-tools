@@ -24,7 +24,12 @@ export function getFileName(webkitRelativePath: string) {
   };
 }
 
-export function analyzeFiles(files: File[]) {
+export function analyzeFiles(
+  files: File[],
+  options: {
+    isThirtDir: boolean;
+  }
+) {
   const nameList: Item[] = [];
   const dirList: Item[] = [];
   const setType = new Set<string>();
@@ -52,10 +57,15 @@ export function analyzeFiles(files: File[]) {
     }
     nameList.push({ name: file.name, image: img, suffix: fileSuffix });
 
-    // 只处理一级目录
+    // 只处理二三级目录
     const dirArr = file.webkitRelativePath.split('/');
     if (dirArr.length > 2) {
-      const dir = dirArr[1];
+      let dir = '';
+      if (options.isThirtDir) {
+        dirArr.length > 3 && (dir = dirArr[2]);
+      } else {
+        dir = dirArr[1];
+      }
       const flag = dirList.some(item => dir === item.name);
       if (!flag && dir) {
         dirList.push({ name: dir, image: folder, suffix: 'dir' });
@@ -76,15 +86,6 @@ export function ObjectNaturalSort(a: Item, b: Item) {
   const partsA = a.name.match(regex)!;
   const partsB = b.name.match(regex)!;
   return sort(partsA, partsB);
-}
-
-export function download(image: string, name: string) {
-  const link = document.createElement('a');
-  link.href = image;
-  link.download = name;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 export async function generateImg(width = 375, nodeId = 'list') {

@@ -35,9 +35,9 @@ export default function PreviewModal({
         <section>
           <div className={styles.left}>
             {src ? (
-              <img src={src} alt="" />
+              <img src={src} style={{ alignSelf: 'flex-start' }} alt="" />
             ) : (
-              <div className={styles.loading}>图片加载中...</div>
+              <div className={styles.loading}></div>
             )}
           </div>
           {children}

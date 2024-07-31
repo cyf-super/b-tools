@@ -1,10 +1,11 @@
 import styles from './index.module.scss';
-import { BaseButton, Checkbox, SelectBox } from '@/components';
-import uploadImg from './img/upload.png';
+import { BaseButton, SelectBox } from '@/components';
+import uploadImg from '/content/upload.png';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { download } from './utils';
+import { formatBytes } from './utils';
 import { toast } from 'sonner';
 import { folderStore } from '../../store';
+import { download, getBase64ImageSize } from '@/utils';
 
 export interface Item {
   name: string;
@@ -12,37 +13,31 @@ export interface Item {
   image: string;
 }
 
-const OPTIONS = [
-  {
-    value: 2,
-    label: '2张'
-  },
-  {
-    value: 3,
-    label: '3 张'
-  },
-  {
-    value: 4,
-    label: '4 张'
-  },
-  {
-    value: 5,
-    label: ' 5 张'
-  },
-  {
-    value: 6,
-    label: ' 6 张'
-  }
-];
+interface SplitImage {
+  url: string;
+  width: number;
+  height: number;
+  size: string;
+}
+
+const options = [2, 3, 4, 5, 6];
+const OPTIONS = options.map(num => ({
+  value: num,
+  label: ` ${num} 张`
+}));
 
 export function SlicePicture() {
   const { splitImage, setSplitImage } = folderStore();
   const [image, setImage] = useState('');
-  const [imageInfo, setImageInfo] = useState<[number, number]>([0, 0]);
-  const [cropperImgList, setCropperImgList] = useState<string[]>([]);
+  const [imageInfo, setImageInfo] = useState({
+    width: 0,
+    height: 0,
+    size: '0kb'
+  });
+  const [splitImgList, setSplitImgList] = useState<SplitImage[]>([]);
+  const splitSizeRef = useRef<HTMLInputElement | null>(null);
 
   const [selectSize, setSelectSize] = useState(3);
-  const [isSplitimg, setIsSplitimg] = useState(false);
 
   const imgRef = useRef<HTMLImageElement | null>(null);
   const cropperRef = useRef<HTMLCanvasElement | null>(null);
@@ -54,22 +49,15 @@ export function SlicePicture() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (imgSizeMap[selectSize]) {
-  //     setDataUrl(imgSizeMap[selectSize]);
-  //   } else if (imageInfo[0]) {
-  //     // onSplitImage();
-  //   } else {
-  //     toast.error('图片为空，请重新上传');
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectSize, imageInfo]);
-
   const onChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-
     if (!files) return;
-    const url = window.URL.createObjectURL(files[0]);
+    const file = files[0];
+    const url = window.URL.createObjectURL(file);
+    setImageInfo(info => ({
+      ...info,
+      size: formatBytes(file.size || 0)
+    }));
     setImage(url);
     setSplitImage(url);
     setWidthAndHeight(url);
@@ -79,35 +67,40 @@ export function SlicePicture() {
   function setWidthAndHeight(url: string) {
     const image = new Image();
     image.onload = () => {
-      console.log([image.width, image.height]);
-      setImageInfo([image.width, image.height]);
+      const { width, height } = image;
+      setImageInfo(info => ({
+        ...info,
+        width,
+        height
+      }));
     };
     image.src = url;
   }
 
   const downloadAsImage = async () => {
-    if (cropperImgList.length) {
-      for (let i = 0; i < cropperImgList.length; i++) {
-        await download(cropperImgList[i], '详情.png');
+    if (splitImgList.length) {
+      for (let i = 0; i < splitImgList.length; i++) {
+        await download(splitImgList[i].url, '详情.png');
       }
       toast.success('下载完成');
     }
   };
 
   const onPreview = async () => {
-    // setPreviewOpen(true);
-    // generateImgUrl();
-    // onSplitImage()
     const img = new Image();
     img.src = image;
-    setCropperImgList([]);
-    const croppedParts: string[] = [];
+    setSplitImgList([]);
+    const croppedParts: SplitImage[] = [];
     img.onload = () => {
       const canvas = cropperRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const { width, height } = img;
-      const sliceHeight = height / selectSize;
+      let splitSize = Number(splitSizeRef.current?.value);
+      if (typeof splitSize !== 'number' || isNaN(splitSize)) {
+        splitSize = 0;
+      }
+      const sliceHeight = (height - splitSize) / selectSize;
 
       for (let i = 0; i < selectSize; i++) {
         // 清空画布
@@ -118,9 +111,14 @@ export function SlicePicture() {
         ctx?.drawImage(img, 0, -i * sliceHeight);
         // 获取每一部分的图像数据URL
         const url = canvas.toDataURL();
-        croppedParts.push(url);
+        croppedParts.push({
+          url,
+          width,
+          height: sliceHeight,
+          size: formatBytes(getBase64ImageSize(url))
+        });
         if (croppedParts.length === selectSize) {
-          setCropperImgList(croppedParts);
+          setSplitImgList(croppedParts);
         }
       }
     };
@@ -147,46 +145,59 @@ export function SlicePicture() {
           <section className="right">
             <div className="handleBtn">
               <BaseButton
-                className="preview"
+                className="previewBtn"
                 disabled={!image}
                 onClick={onPreview}
               >
                 preview
               </BaseButton>
-              <BaseButton
-                className="preview"
-                disabled={!image}
-                onClick={downloadAsImage}
-              >
+              <BaseButton disabled={!image} primary onClick={downloadAsImage}>
                 Download
               </BaseButton>
             </div>
             <div className="fileDetail">
               <span className="fileNum">
-                图片尺寸：{imageInfo[0]} x {imageInfo[1]}
+                图片尺寸：{imageInfo.width} x {imageInfo.height}
               </span>
+              <span className="fileNum">图片大小：{imageInfo.size}</span>
             </div>
-            <Checkbox
-              checked={isSplitimg}
-              onChange={setIsSplitimg}
-              label="分割图片"
-            ></Checkbox>
             <SelectBox
               value={selectSize}
               onSelect={setSelectSize}
               OPTIONS={OPTIONS}
+              label="分割张数："
             />
+            <div className="sizeInput">
+              <span className="sizeInputIcon"></span>
+              <label htmlFor="splitInput">去除尾部：</label>
+              <input
+                ref={splitSizeRef}
+                id="splitInput"
+                type="text"
+                placeholder="高度"
+              />
+            </div>
           </section>
         </section>
         <canvas ref={cropperRef} style={{ display: 'none' }} />
 
         <section className="preview">
-          <h2>预览</h2>
-          {cropperImgList.map(src => (
-            <div className="item">
-              <img src={src} />
-            </div>
-          ))}
+          <h1>预览</h1>
+          <div className="previewList">
+            {splitImgList.map((item, index) => (
+              <div className="item">
+                <div className="index">{index + 1}</div>
+                <img src={item.url} />
+                <div className="imageInfo">
+                  <p>
+                    尺寸：{item.width} x {item.height}
+                  </p>
+                  <p>大小：{item.size}</p>
+                  <p></p>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </main>
     </>
