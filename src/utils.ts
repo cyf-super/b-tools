@@ -49,6 +49,7 @@ export const VOICE = ['mp3', 'mp2', 'mp1', 'wav'];
 export const PPT = ['ppt', 'pptx'];
 export const WORD = ['docx', 'doc', 'docx'];
 export const PDF = ['pdf'];
+export const PSD = ['psd'];
 
 export function download(image: string, name: string) {
   const link = document.createElement('a');

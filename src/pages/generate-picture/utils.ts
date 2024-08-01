@@ -1,5 +1,5 @@
 import { toPng } from 'html-to-image';
-import { IMAGE, PDF, PPT, VIDEO, VOICE, WORD, ZIP, sort } from '@/utils';
+import { IMAGE, PDF, PPT, PSD, VIDEO, VOICE, WORD, ZIP, sort } from '@/utils';
 import { Item } from '.';
 import { naturalSort } from '../file-analyze/utils';
 import image from './img/image.png';
@@ -11,6 +11,7 @@ import video from './img/video.png';
 import voice from './img/voice.png';
 import zip from './img/zip.png';
 import word from './img/word.png';
+import psd from './img/psd.png';
 
 export function getFileName(webkitRelativePath: string) {
   const nameArr = webkitRelativePath.split('.');
@@ -54,6 +55,8 @@ export function analyzeFiles(
       img = pdf;
     } else if (WORD.includes(fileSuffix)) {
       img = word;
+    } else if (PSD.includes(fileSuffix)) {
+      img = psd;
     }
     nameList.push({ name: file.name, image: img, suffix: fileSuffix });
 
@@ -88,8 +91,19 @@ export function ObjectNaturalSort(a: Item, b: Item) {
   return sort(partsA, partsB);
 }
 
-export async function generateImg(width = 375, nodeId = 'list') {
+export async function generateImg({
+  width = 375,
+  nodeId = 'list',
+  isSingle = false
+}: {
+  width: number;
+  nodeId?: string;
+  isSingle?: boolean;
+}) {
   const node = document.getElementById(nodeId) as HTMLElement;
+  if (isSingle) {
+    node.style.paddingBottom = '12px';
+  }
   return toPng(node, {
     width,
     quality: 1,

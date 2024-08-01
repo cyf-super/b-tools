@@ -1,7 +1,7 @@
 import styles from './index.module.scss';
 import { BaseButton, Checkbox, SelectBox } from '@/components';
 import uploadImg from './img/upload.png';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { analyzeFiles, generateImg, getArr } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -38,7 +38,6 @@ export function GeneratePicture() {
   const [selectNameList, setSelectNameList] = useState<Item[]>([]);
   const [splitList, setSplitList] = useState<Item[][]>([]);
   const [isDownloading, setDownloadStatus] = useState(false);
-  // const [isGenerating, setIsGenerating] = useState(false);
 
   const [dataUrl, setDataUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -49,6 +48,25 @@ export function GeneratePicture() {
   const [isSplitimg, setIsSplitimg] = useState(true);
   const [isThirtDir, setIsThirtDir] = useState(false);
 
+  const previewOpenRef = useRef(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: any) => {
+      if (event.key === 'Escape') {
+        if (!nameList.length) return;
+        if (previewOpenRef.current) {
+          setPreviewOpen(false);
+        } else {
+          onPreview();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   useEffect(() => {
     const key = selectSize + selectTypeList.join('');
     if (imgSizeMap[key]) {
@@ -57,8 +75,10 @@ export function GeneratePicture() {
       setDataUrl('');
       previewOpen && generateImgUrl();
     }
+    previewOpenRef.current = previewOpen;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectSize]);
+  }, [selectSize, previewOpen]);
 
   useEffect(() => {
     if (files.length) {
@@ -134,27 +154,41 @@ export function GeneratePicture() {
 
   const downloadAsImage = async () => {
     setDownloadStatus(true);
+    // 分割图片
     if (isSplitimg && selectNameList.length > SPLIT_SIZE) {
       const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
       sizeArr.forEach(async id => {
-        const dataUrl = await generateImg(selectSize, 'list-' + id);
-        download(dataUrl, '详情.png');
+        generateImg({
+          width: selectSize,
+          nodeId: 'list-' + id,
+          isSingle: sizeArr.length === 1
+        })
+          .then(dataUrl => {
+            download(dataUrl, '详情.png');
+          })
+          .catch(e => {
+            console.log('e==> ', e);
+            toast.error('生成失败!');
+          })
+          .finally(() => {
+            setDownloadStatus(false);
+          });
       });
     } else if (dataUrl) {
       download(dataUrl, '详情.png');
       toast('下载成功');
+      setDownloadStatus(false);
     } else {
       await generateImgUrl();
       const key = selectSize + selectTypeList.join('');
       download(imgSizeMap[key], '详情.png');
       toast('下载成功');
+      setDownloadStatus(false);
     }
-    setDownloadStatus(false);
   };
 
-  const onPreview = async () => {
+  const onPreview = () => {
     setPreviewOpen(true);
-    generateImgUrl();
   };
 
   const generateImgUrl = async () => {
@@ -162,15 +196,20 @@ export function GeneratePicture() {
       const key = selectSize + selectTypeList.join('');
       console.log(imgSizeMap, imgSizeMap[key]);
       if (!imgSizeMap[key]) {
-        // setIsGenerating(true);
-        const dataUrl = await generateImg(selectSize);
-        setDataUrl(dataUrl);
-        imgSizeMap[key] = dataUrl;
+        generateImg({
+          width: selectSize,
+          isSingle: true
+        })
+          .then(dataUrl => {
+            setDataUrl(dataUrl);
+            imgSizeMap[key] = dataUrl;
+          })
+          .catch(e => {
+            console.log('加载失败 ', e);
+          });
       }
     } catch (error) {
       toast.error('加载失败');
-    } finally {
-      // setIsGenerating(false);
     }
   };
 
