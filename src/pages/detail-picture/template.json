@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nameBackground": "",
+    "textListBackground": "",
+    "background": "#fff"
+  },
+  {
+    "id": 2,
+    "nameBackground": "",
+    "textListBackground": "",
+    "background": "transparent"
+  },
+  {
+    "id": 3,
+    "nameBackground": "",
+    "textListBackground": "",
+    "background": "url(/b-tools/template/template2.png) top/100% repeat-y"
+  }
+]

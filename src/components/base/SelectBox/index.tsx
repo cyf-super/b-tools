@@ -1,16 +1,21 @@
 import styles from './index.module.scss';
 
-type SelectBoxType = {
-  value: number;
-  onSelect: (num: number) => void;
+type SelectBoxType<T> = {
+  value: T;
+  onSelect: (num: T) => void;
   OPTIONS: {
-    value: number;
+    value: T;
     label: string;
   }[];
   label?: string;
 };
 
-export function SelectBox({ value, onSelect, OPTIONS, label }: SelectBoxType) {
+export function SelectBox<T extends number | string = number>({
+  value,
+  onSelect,
+  OPTIONS,
+  label
+}: SelectBoxType<T>) {
   return (
     <div className={styles.selectBox}>
       {label && (
@@ -21,7 +26,10 @@ export function SelectBox({ value, onSelect, OPTIONS, label }: SelectBoxType) {
       )}
       <select
         id={label}
-        onChange={e => onSelect(+e.target.value)}
+        onChange={e => {
+          const value = e.target.value;
+          onSelect((Number.isNaN(+value) ? value : +value) as unknown as T);
+        }}
         onClick={e => {
           e.stopPropagation();
         }}

@@ -5,7 +5,7 @@ import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { analyzeFiles, generateImg, getArr } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { folderStore } from '../../store';
+import { globalStore } from '../../store';
 import PreviewModal from './previewModal';
 import { download, getBase64ImageSize } from '@/utils';
 import { formatBytes } from '../slice-picture/utils';
@@ -26,8 +26,8 @@ const imgSizeMap: {
   [key: string]: string;
 } = {};
 
-export function GeneratePicture() {
-  const { files, setFiles } = folderStore();
+export default function GeneratePicture() {
+  const { files, setFiles } = globalStore();
   const [nameList, setNameList] = useState<Item[]>([]);
   const [dirList, setDirList] = useState<Item[]>([]);
   const [typeList, setTypeList] = useState<string[]>(['文件夹']);
@@ -49,6 +49,7 @@ export function GeneratePicture() {
   const [isThirtDir, setIsThirtDir] = useState(false);
 
   const previewOpenRef = useRef(false);
+  const cropperRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -156,24 +157,22 @@ export function GeneratePicture() {
     setDownloadStatus(true);
     // 分割图片
     if (isSplitimg && selectNameList.length > SPLIT_SIZE) {
-      const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
-      sizeArr.forEach(async id => {
-        generateImg({
+      const size = Math.ceil(selectNameList.length / SPLIT_SIZE);
+      try {
+        const dataUrl = await generateImg({
           width: selectSize,
-          nodeId: 'list-' + id,
-          isSingle: sizeArr.length === 1
-        })
-          .then(dataUrl => {
-            download(dataUrl, '详情.png');
-          })
-          .catch(e => {
-            console.log('e==> ', e);
-            toast.error('生成失败!');
-          })
-          .finally(() => {
-            setDownloadStatus(false);
-          });
-      });
+          isSingle: size === 1
+        });
+        const splitImgList = await getSplitImage(dataUrl, size);
+        for (let i = 0; i < splitImgList.length; i++) {
+          await download(splitImgList[i], '详情.jpg');
+        }
+        toast.success('下载完成');
+      } catch (error) {
+        toast.error('下载失败!');
+      } finally {
+        setDownloadStatus(false);
+      }
     } else if (dataUrl) {
       download(dataUrl, '详情.png');
       toast('下载成功');
@@ -187,6 +186,39 @@ export function GeneratePicture() {
     }
   };
 
+  const getSplitImage = async (
+    image: string,
+    splitSize: number
+  ): Promise<string[]> => {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.src = image;
+      const croppedParts: string[] = [];
+      img.onload = () => {
+        const canvas = cropperRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const { width, height } = img;
+        const sliceHeight = height / splitSize;
+
+        for (let i = 0; i < splitSize; i++) {
+          // 清空画布
+          ctx?.clearRect(0, 0, canvas.width, canvas.height);
+          canvas.width = width;
+          canvas.height = sliceHeight;
+          // 绘制每一部分的图像到画布上
+          ctx?.drawImage(img, 0, -i * sliceHeight);
+          // 获取每一部分的图像数据URL
+          const url = canvas.toDataURL();
+          croppedParts.push(url);
+          if (croppedParts.length === splitSize) {
+            resolve(croppedParts);
+          }
+        }
+      };
+    });
+  };
+
   const onPreview = () => {
     setPreviewOpen(true);
   };
@@ -194,7 +226,6 @@ export function GeneratePicture() {
   const generateImgUrl = async () => {
     try {
       const key = selectSize + selectTypeList.join('');
-      console.log(imgSizeMap, imgSizeMap[key]);
       if (!imgSizeMap[key]) {
         generateImg({
           width: selectSize,
@@ -348,6 +379,8 @@ export function GeneratePicture() {
             />
           </section>
         </section>
+
+        <canvas ref={cropperRef} style={{ display: 'none' }} />
       </main>
 
       <PreviewModal

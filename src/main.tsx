@@ -6,7 +6,9 @@ import './index.css';
 import '@cyf-super/reset-css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <React.Suspense fallback={<></>}>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </React.Suspense>
 );

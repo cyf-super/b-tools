@@ -5,10 +5,10 @@ import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { analyzeFiles } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { folderStore } from '../../store';
+import { globalStore } from '../../store';
 
-export function FileAnalyze() {
-  const { files, setFiles } = folderStore();
+export default function FileAnalyze() {
+  const { files, setFiles } = globalStore();
   const [nameList, setNameList] = useState<string[]>([]);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [urlDir, setUrlDir] = useState<string[]>([]);

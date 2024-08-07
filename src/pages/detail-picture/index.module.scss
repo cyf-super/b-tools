@@ -1,0 +1,169 @@
+@mixin primary {
+  background-color: var(--btnColor);
+  border: 1px solid var(--btnColor);
+  color: #fff;
+}
+// Ma Shan Zheng
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+
+/* 定义字体类型 */
+@font-face {
+  font-family: '正文宋楷';
+  src: url('/font/正文宋楷.woff2') format('truetype');
+}
+@font-face {
+  font-family: '江南手书';
+  src: url('/font/江南手书.woff2') format('woff2');
+}
+@font-face {
+  font-family: '创粗黑';
+  src: url('/font/创粗黑.woff2') format('truetype');
+}
+@font-face {
+  font-family: '方方先锋体';
+  src: url('/font/方方先锋体.woff2') format('truetype');
+}
+@font-face {
+  font-family: '御守锦书';
+  src: url('/font/御守锦书.woff2') format('woff2');
+}
+@font-face {
+  font-family: '清平手书';
+  src: url('/font/清平手书.woff2') format('woff2');
+}
+
+.box {
+  margin-inline: 50px 20px;
+
+  :global {
+    .editor {
+      display: flex;
+      .left {
+        width: 60%;
+      }
+    }
+
+    .btn {
+      margin-top: 25px;
+      text-align: center;
+
+      button:not(:first-child) {
+        margin-left: 20px;
+      }
+
+      &-texthtml {
+        @include primary;
+      }
+      &-small {
+        width: 90px;
+        height: 40px;
+      }
+    }
+
+    .content {
+      display: flex;
+      margin: 24px 0;
+      .textList {
+        position: relative;
+        box-sizing: border-box;
+        background: #fff;
+        padding: 4px 16px 12px;
+        border-radius: 8px;
+        width: 350px;
+        height: fit-content;
+        font-family: '正文宋楷';
+        .watermarkList {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-around;
+          .watermarkText {
+            font-family: '清平手书';
+            font-size: 35px;
+            color: #efefef;
+            transform: rotate(345deg);
+          }
+        }
+        .item {
+          position: relative;
+          z-index: 2;
+          .name {
+            font-size: 19px;
+            font-weight: 700;
+            margin-top: 2px;
+          }
+          .detailList {
+            padding-top: 2px;
+            .text {
+              font-size: 18px;
+              margin: 0 0 0px 18px;
+            }
+          }
+        }
+      }
+      .options {
+        margin: 10px 0 0 40px;
+        font-size: 18px;
+        .font {
+          display: flex;
+          .textStyle {
+            margin-left: 44px;
+            .editIndex {
+              display: flex;
+              align-items: center;
+              margin-top: 10px;
+              .textInput {
+                width: 60px;
+                margin-top: 10px;
+              }
+            }
+          }
+          .colorSelect {
+            margin: 12px 0 0 22px;
+          }
+        }
+        .watermarkEdit {
+          margin-top: 24px;
+          display: flex;
+          align-items: center;
+        }
+        .templates {
+          margin-top: 16px;
+          .templateList {
+            display: flex;
+            .template {
+              margin-right: 12px;
+              width: 120px;
+              height: 120px;
+              border-radius: 8px;
+              cursor: pointer;
+            }
+            .selectTemplate {
+              border: 1px solid #a1c6f6;
+              box-shadow: 0px 0px 6px 0px #d4d3ff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+input[type='text'] {
+  width: 200px;
+  height: 30px;
+  border: 0.5px solid #8aa4fc;
+  outline: none;
+  border-radius: 6px;
+  padding-inline: 5px;
+  font-size: 16px;
+  margin-left: 10px;
+  &::placeholder {
+    color: #dcdcdc;
+  }
+}

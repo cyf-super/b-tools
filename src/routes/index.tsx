@@ -1,9 +1,12 @@
 import { createHashRouter } from 'react-router-dom';
 import App from '../App';
 import ErrorPage from '../error-page';
-import { FileAnalyze } from '../pages/file-analyze';
-import { GeneratePicture } from '../pages/generate-picture';
-import { SlicePicture } from '../pages/slice-picture';
+import React from 'react';
+
+const FileAnalyze = React.lazy(() => import('../pages/file-analyze'));
+const GeneratePicture = React.lazy(() => import('../pages/generate-picture'));
+const SlicePicture = React.lazy(() => import('../pages/slice-picture'));
+const DetailPicture = React.lazy(() => import('../pages/detail-picture'));
 
 const router = createHashRouter([
   {
@@ -18,6 +21,10 @@ const router = createHashRouter([
       {
         path: 'generate-picture',
         element: <GeneratePicture />
+      },
+      {
+        path: 'detail-picture',
+        element: <DetailPicture />
       },
       {
         path: 'slice-picture',

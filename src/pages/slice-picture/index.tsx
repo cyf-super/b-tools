@@ -4,7 +4,7 @@ import uploadImg from '/content/upload.png';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { formatBytes } from './utils';
 import { toast } from 'sonner';
-import { folderStore } from '../../store';
+import { globalStore } from '../../store';
 import { download, getBase64ImageSize } from '@/utils';
 
 export interface Item {
@@ -26,8 +26,8 @@ const OPTIONS = options.map(num => ({
   label: ` ${num} 张`
 }));
 
-export function SlicePicture() {
-  const { splitImage, setSplitImage } = folderStore();
+export default function SlicePicture() {
+  const { splitImage, setSplitImage } = globalStore();
   const [image, setImage] = useState('');
   const [imageInfo, setImageInfo] = useState({
     width: 0,

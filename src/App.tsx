@@ -18,6 +18,11 @@ const linkList = [
     router: '/generate-picture'
   },
   {
+    name: 'Detail Picture',
+    image: fileAnalyzeSrc,
+    router: '/detail-picture'
+  },
+  {
     name: 'Slice Picture',
     image: fileAnalyzeSrc,
     router: '/slice-picture'

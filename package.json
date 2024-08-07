@@ -21,9 +21,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "slate": "^0.101.1",
+    "slate": "^0.101.5",
     "slate-history": "^0.100.0",
-    "slate-react": "^0.101.3",
+    "slate-react": "^0.101.5",
     "sonner": "^1.2.4",
     "zustand": "^4.5.4"
   },
@@ -39,6 +39,7 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "gh-pages": "^6.1.0",
     "sass": "^1.69.5",
+    "ttf2woff2": "^6.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
   }
