@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import { BaseButton, Checkbox, SelectBox } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { analyzeFiles, generateImg, getArr } from './utils';
+import { analyzeFiles, generateImg } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { globalStore } from '../../store';
@@ -22,7 +22,7 @@ const OPTIONS = options.map(width => ({
   label: `宽度: ${width}px`
 }));
 const SPLIT_SIZE = 25;
-const imgSizeMap: {
+let imgSizeMap: {
   [key: string]: string;
 } = {};
 
@@ -36,7 +36,6 @@ export default function GeneratePicture() {
     '文件夹'
   ]);
   const [selectNameList, setSelectNameList] = useState<Item[]>([]);
-  const [splitList, setSplitList] = useState<Item[][]>([]);
   const [isDownloading, setDownloadStatus] = useState(false);
 
   const [dataUrl, setDataUrl] = useState('');
@@ -44,7 +43,7 @@ export default function GeneratePicture() {
   const [watermark, setWatermark] = useState('');
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [selectSize, setSelectSize] = useState(450);
+  const [imageWidth, setImageWidth] = useState(450);
   const [isSplitimg, setIsSplitimg] = useState(true);
   const [isThirtDir, setIsThirtDir] = useState(false);
 
@@ -69,7 +68,7 @@ export default function GeneratePicture() {
   }, []);
 
   useEffect(() => {
-    const key = selectSize + selectTypeList.join('');
+    const key = imageWidth + selectTypeList.join('');
     if (imgSizeMap[key]) {
       setDataUrl(imgSizeMap[key]);
     } else {
@@ -79,7 +78,7 @@ export default function GeneratePicture() {
     previewOpenRef.current = previewOpen;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectSize, previewOpen]);
+  }, [imageWidth, previewOpen]);
 
   useEffect(() => {
     if (files.length) {
@@ -88,12 +87,7 @@ export default function GeneratePicture() {
   }, [files, isThirtDir]);
 
   useEffect(() => {
-    const sizeArr = getArr(Math.ceil(selectNameList.length / SPLIT_SIZE));
-    const splitList = sizeArr.map(num =>
-      selectNameList.slice(num * SPLIT_SIZE, (num + 1) * SPLIT_SIZE)
-    );
-    setSplitList(splitList);
-    const key = selectSize + selectTypeList.join('');
+    const key = imageWidth + selectTypeList.join('');
     imgSizeMap[key] && setDataUrl(imgSizeMap[key]);
   }, [selectNameList]);
 
@@ -128,6 +122,7 @@ export default function GeneratePicture() {
     setNameList(info.nameList);
     setTypeList(['文件夹', ...info.typeList]);
     setDirList(info.dirList);
+    setTitle(info.dirName);
   }
 
   const onDelete = (index: number) => {
@@ -160,7 +155,7 @@ export default function GeneratePicture() {
       const size = Math.ceil(selectNameList.length / SPLIT_SIZE);
       try {
         const dataUrl = await generateImg({
-          width: selectSize,
+          width: imageWidth,
           isSingle: size === 1
         });
         const splitImgList = await getSplitImage(dataUrl, size);
@@ -179,7 +174,7 @@ export default function GeneratePicture() {
       setDownloadStatus(false);
     } else {
       await generateImgUrl();
-      const key = selectSize + selectTypeList.join('');
+      const key = imageWidth + selectTypeList.join('');
       download(imgSizeMap[key], '详情.png');
       toast('下载成功');
       setDownloadStatus(false);
@@ -225,10 +220,10 @@ export default function GeneratePicture() {
 
   const generateImgUrl = async () => {
     try {
-      const key = selectSize + selectTypeList.join('');
+      const key = imageWidth + selectTypeList.join('');
       if (!imgSizeMap[key]) {
         generateImg({
-          width: selectSize,
+          width: imageWidth,
           isSingle: true
         })
           .then(dataUrl => {
@@ -246,6 +241,7 @@ export default function GeneratePicture() {
 
   const onReset = () => {
     transform(files);
+    imgSizeMap = {};
   };
 
   return (
@@ -264,7 +260,7 @@ export default function GeneratePicture() {
         </div>
 
         <section className="content">
-          <section className="left">
+          <section className="left" style={{ width: imageWidth + 'px' }}>
             <div className="handleBtn">
               <BaseButton
                 className="preview"
@@ -325,7 +321,7 @@ export default function GeneratePicture() {
                 />
               </div>
             </div>
-            <motion.ul
+            <motion.div
               layout
               layoutId={'list'}
               className="list-container"
@@ -333,32 +329,29 @@ export default function GeneratePicture() {
             >
               <AnimatePresence>
                 {title && <p className="imgTitle">{title}</p>}
-
-                {splitList.map((nameArr, index) => (
-                  <div className="" id={'list-' + index} key={index}>
-                    {watermark && <p className="watermark">{watermark}</p>}
-                    {nameArr.map((item, index) => (
-                      <motion.li
-                        initial={{ y: -200, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        key={item.name}
-                        className="item"
-                      >
-                        <div className="fileName">
-                          <img src={item.image} alt="" />
-                          {item.name}
-                        </div>
-                        <div
-                          className="delIcon"
-                          onClick={() => onDelete(index)}
-                        ></div>
-                      </motion.li>
-                    ))}
-                  </div>
+                {watermark && (
+                  <p className="watermark">{watermark || '长安不止三万里'}</p>
+                )}
+                {selectNameList.map((item, index) => (
+                  <motion.li
+                    initial={{ y: -200, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    key={item.name}
+                    className="item"
+                  >
+                    <div className="fileName">
+                      <img src={item.image} alt="" />
+                      {item.name}
+                    </div>
+                    <div
+                      className="delIcon"
+                      onClick={() => onDelete(index)}
+                    ></div>
+                  </motion.li>
                 ))}
               </AnimatePresence>
-            </motion.ul>
+            </motion.div>
           </section>
           <section className="right">
             <Checkbox
@@ -372,8 +365,8 @@ export default function GeneratePicture() {
               label="只针对二级目录"
             ></Checkbox>
             <SelectBox
-              value={selectSize}
-              onSelect={setSelectSize}
+              value={imageWidth}
+              onSelect={setImageWidth}
               OPTIONS={OPTIONS}
               label="图片宽度： "
             />
@@ -405,8 +398,8 @@ export default function GeneratePicture() {
             label="分割图片"
           ></Checkbox>
           <SelectBox
-            value={selectSize}
-            onSelect={setSelectSize}
+            value={imageWidth}
+            onSelect={setImageWidth}
             OPTIONS={OPTIONS}
           />
 

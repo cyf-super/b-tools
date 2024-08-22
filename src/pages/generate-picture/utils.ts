@@ -79,7 +79,8 @@ export function analyzeFiles(
   return {
     nameList: nameList.sort(ObjectNaturalSort),
     typeList: [...setType].sort(naturalSort),
-    dirList: [...dirList].sort(ObjectNaturalSort)
+    dirList: [...dirList].sort(ObjectNaturalSort),
+    dirName: files[0].webkitRelativePath.split('/')[0]
   };
 }
 
@@ -102,7 +103,7 @@ export async function generateImg({
 }) {
   const node = document.getElementById(nodeId) as HTMLElement;
   if (isSingle) {
-    node.style.paddingBottom = '12px';
+    node.style.paddingBottom = '11px';
   }
   return toPng(node, {
     width,
@@ -110,11 +111,3 @@ export async function generateImg({
     pixelRatio: 2
   });
 }
-
-/**
- * 获取初始化数组
- * @param length
- * @returns
- */
-export const getArr = (length: number) =>
-  Array.from({ length }, (_, index) => index);

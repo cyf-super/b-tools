@@ -72,6 +72,7 @@ export default function FileAnalyze() {
       isDir: onlyDir,
       isAddSubDir: subDir
     });
+    console.log('info ', info);
     setNameList(info.nameList);
     setTypeList(info.typeList);
     setImgDir(info.imgDir);
@@ -181,7 +182,9 @@ export default function FileAnalyze() {
               </p>
 
               {zipDir.map(name => (
-                <div key={name} className="dir"></div>
+                <div key={name} className="dir">
+                  {name}
+                </div>
               ))}
             </div>
             <div className="textList">
@@ -189,7 +192,9 @@ export default function FileAnalyze() {
                 是否有txt文件{textDir.length ? `【${textDir.length}】` : ''}
               </p>
               {textDir.map(name => (
-                <div key={name} className="dir"></div>
+                <div key={name} className="dir">
+                  {name}
+                </div>
               ))}
             </div>
             <div className="urlList">

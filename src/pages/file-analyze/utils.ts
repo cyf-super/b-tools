@@ -52,14 +52,19 @@ export function analyzeFiles(
       }
     }
     if (isDir) {
-      // 只处理一级目录
-      let dir = file.webkitRelativePath.split('/')[0];
-      if (isAddSubDir) {
-        dir = file.webkitRelativePath.split('/').slice(1, -1).join('/');
-      }
-      const flag = nameList.some(name => dir === name);
-      if (!flag && dir) {
-        nameList.push(dir);
+      // 只处理二级目录
+      let dirList = file.webkitRelativePath.split('/');
+      if (dirList.length > 2) {
+        let dir = '';
+        if (isAddSubDir) {
+          dir = dirList.slice(1, -1).join('/');
+        } else {
+          dir = dirList[1];
+        }
+        const flag = nameList.some(name => dir === name);
+        if (!flag && dir) {
+          nameList.push(dir);
+        }
       }
     }
   });
@@ -70,7 +75,7 @@ export function analyzeFiles(
     urlDir: urlDir.sort(naturalSort),
     imgDir: imgDir.sort(naturalSort),
     textDir: textDir.sort(naturalSort),
-    zipDir: textDir.sort(naturalSort)
+    zipDir: zipDir.sort(naturalSort)
   };
 }
 

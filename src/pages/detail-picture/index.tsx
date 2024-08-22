@@ -70,7 +70,9 @@ export default function DetailPicture() {
           >
             <div className="watermarkList">
               {watermarkList.current.map(_ => (
-                <div className="watermarkText">{watermark}</div>
+                <div className="watermarkText">
+                  {watermark || '长安不止三万里'}
+                </div>
               ))}
             </div>
             {textList.map((item, index) => (
@@ -111,7 +113,6 @@ export default function DetailPicture() {
                 <SelectBoxGroud
                   style={nameStyle}
                   setType={rest => {
-                    console.log(rest);
                     setNameStyle({
                       ...nameStyle,
                       ...rest

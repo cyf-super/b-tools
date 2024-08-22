@@ -22,3 +22,8 @@ body {
   font-size: 16px;
   font-family: 'Noto Sans SC', sans-serif, 'ABeeZee', sans-serif;
 }
+
+@font-face {
+  font-family: '清平手书';
+  src: url('/font/清平手书.woff2') format('woff2');
+}
