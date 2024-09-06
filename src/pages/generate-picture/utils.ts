@@ -94,8 +94,7 @@ export function ObjectNaturalSort(a: Item, b: Item) {
 
 export async function generateImg({
   width = 375,
-  nodeId = 'list',
-  isSingle = false
+  nodeId = 'list'
 }: {
   width: number;
   nodeId?: string;

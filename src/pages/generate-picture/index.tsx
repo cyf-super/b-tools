@@ -40,7 +40,10 @@ export default function GeneratePicture() {
 
   const [dataUrl, setDataUrl] = useState('');
   const [title, setTitle] = useState('');
-  const [watermark, setWatermark] = useState('');
+  const [watermark, setWatermark] = useState({
+    name: '',
+    num: 2,
+  });
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [imageWidth, setImageWidth] = useState(450);
@@ -113,6 +116,7 @@ export default function GeneratePicture() {
     setFiles([...files]);
     e.target.value = '';
     toast.success('上传成功');
+    onReset()
   };
 
   function transform(files: File[]) {
@@ -316,8 +320,20 @@ export default function GeneratePicture() {
                 <input
                   type="text"
                   placeholder="水印"
-                  value={watermark}
-                  onChange={e => setWatermark(e.target.value)}
+                  value={watermark.name}
+                  onChange={e => setWatermark({
+                    ...watermark,
+                    name: e.target.value
+                  })}
+                />
+                <input
+                  type="text"
+                  placeholder="数量"
+                  value={watermark.num}
+                  onChange={e => setWatermark({
+                    ...watermark,
+                    num: +e.target.value
+                  })}
                 />
               </div>
             </div>
@@ -328,10 +344,14 @@ export default function GeneratePicture() {
               id="list"
             >
               <AnimatePresence>
-                {title && <p className="imgTitle">{title}</p>}
-                {watermark && (
-                  <p className="watermark">{watermark || '长安不止三万里'}</p>
+                {watermark.name && (
+                  <div className='watermarkList'>
+                    {
+                      Array.from({length: +watermark.num}).map(_ => <p className="watermark">{watermark.name || '长安不止三万里'}</p>)
+                    }
+                  </div>
                 )}
+                {title && <p className="imgTitle">{title}</p>}
                 {selectNameList.map((item, index) => (
                   <motion.li
                     initial={{ y: -200, opacity: 0 }}
