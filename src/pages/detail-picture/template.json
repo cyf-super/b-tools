@@ -16,5 +16,12 @@
     "nameBackground": "",
     "textListBackground": "",
     "background": "url(/b-tools/template/template2.jpg) top/100% repeat-y"
+  },
+  {
+    "id": 4,
+    "nameBackground": "",
+    "textListBackground": "",
+    "header": "url(/b-tools/template/header.jpg) center/100% 100% no-repeat",
+    "background": ""
   }
 ]

@@ -102,9 +102,9 @@ export async function generateImg({
   isSingle?: boolean;
 }) {
   const node = document.getElementById(nodeId) as HTMLElement;
-  if (isSingle) {
-    node.style.paddingBottom = '11px';
-  }
+  // if (isSingle) {
+  //   node.style.paddingBottom = '11px';
+  // }
   return toPng(node, {
     width,
     quality: 1,

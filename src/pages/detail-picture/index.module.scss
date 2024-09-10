@@ -59,6 +59,10 @@
     .content {
       display: flex;
       margin: 24px 0;
+      .header {
+        width: 100%;
+        height: 27.72px;
+      }
       .textList {
         position: relative;
         box-sizing: border-box;
@@ -68,6 +72,11 @@
         width: 350px;
         height: fit-content;
         font-family: '正文宋楷';
+        .templateLogo {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
         .watermarkList {
           position: absolute;
           top: 0;
@@ -127,6 +136,40 @@
           margin-top: 24px;
           display: flex;
           align-items: center;
+          .num {
+            margin-left: 20px;
+          }
+          .numInput {
+            width: 100px;
+          }
+        }
+        .logoEdit {
+          .gridLogos {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 12px;
+            .emptyLogo {
+              width: 50px;
+              height: 50px;
+              text-align: center;
+              line-height: 50px;
+              border: 1px solid #8aa4fc;
+              border-radius: 8px;
+              &:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+              }
+            }
+            img {
+              width: 50px;
+              border: 0.5px solid #e1dede;
+              border-radius: 8px;
+              &:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+              }
+            }
+          }
         }
         .templates {
           margin-top: 16px;

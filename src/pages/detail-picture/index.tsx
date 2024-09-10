@@ -1,12 +1,13 @@
 import { Edit } from './editor';
 import styles from './index.module.scss';
 import { BaseButton, Checkbox, SelectBox } from '@/components';
-import { useTransform, StyleType } from './hooks/useTransform';
+import { useTransform, StyleType, LogoTemplate } from './hooks/useTransform';
 import { FontsFamily, FontsSize, FontsWeight } from './utils';
 import Template from './template.json';
 
 export default function DetailPicture() {
   const {
+    logo,
     template,
     editorRef,
     descendant,
@@ -26,7 +27,8 @@ export default function DetailPicture() {
     onTransform,
     editChange,
     onReset,
-    onDownload
+    onDownload,
+    onChangeLogo
   } = useTransform();
 
   const disabled = !descendant[0]?.children[0].text;
@@ -63,15 +65,29 @@ export default function DetailPicture() {
         </div>
 
         <div className="content">
+          {template.header && (
+            <div
+              className="header"
+              style={{
+                background: `url(${template.header}) center/100% 100% no-repeat`
+              }}
+            ></div>
+          )}
           <div
             className="textList"
             id="detailList"
             style={{ background: template.background }}
           >
+            <img
+              src={`/b-tools/templateLogo/logo${logo.id}.png`}
+              className="templateLogo"
+              alt=""
+              style={{ opacity: logo.opacity }}
+            />
             <div className="watermarkList">
               {watermarkList.current.map(_ => (
                 <div className="watermarkText">
-                  {watermark || '长安不止三万里'}
+                  {watermark.text || '长安不止三万里'}
                 </div>
               ))}
             </div>
@@ -152,9 +168,54 @@ export default function DetailPicture() {
               <input
                 type="text"
                 placeholder="水印"
-                value={watermark}
-                onChange={e => setWatermark(e.target.value)}
+                value={watermark.text}
+                onChange={e =>
+                  setWatermark({
+                    ...watermark,
+                    text: e.target.value
+                  })
+                }
               />
+              <h3 className="num">数量: </h3>
+              <input
+                type="text"
+                placeholder="每10行一水印"
+                className="numInput"
+                value={watermark.num}
+                onChange={e =>
+                  setWatermark({
+                    ...watermark,
+                    num: e.target.value
+                  })
+                }
+              />
+            </div>
+            <div className="logoEdit">
+              <h3>logo</h3>
+              <div className="gridLogos">
+                {LogoTemplate.map(id => (
+                  <img
+                    src={`/b-tools/templateLogo/logo${id}.png`}
+                    onClick={() => onChangeLogo({ id })}
+                  />
+                ))}
+                <div
+                  className={['emptyLogo'].join(' ')}
+                  onClick={() => onChangeLogo({ id: 0 })}
+                >
+                  空
+                </div>
+              </div>
+              <div>
+                透明度：
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  onChange={e => onChangeLogo({ opacity: +e.target.value })}
+                />
+              </div>
             </div>
             <div className="templates">
               <h3>模板</h3>

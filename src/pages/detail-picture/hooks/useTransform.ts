@@ -25,11 +25,19 @@ export interface StyleType {
 }
 export type TemplateType = (typeof templateList)[0];
 
+export const LogoTemplate = Array.from({ length: 10 }).map(
+  (_, index) => index + 1
+);
+
 export function useTransform() {
   const { descendant, setDescendant } = globalStore();
   const [textList, setTextList] = useState<Item[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const [template, setTemplate] = useState<TemplateType>(templateList[0]);
+  const [logo, setLogo] = useState({
+    id: 0,
+    opacity: 1
+  });
 
   const [nameStyle, setNameStyle] = useState<StyleType>({
     fontWeight: 700,
@@ -46,7 +54,10 @@ export function useTransform() {
 
   const watermarkList = useRef([]);
 
-  const [watermark, setWatermark] = useState('');
+  const [watermark, setWatermark] = useState({
+    text: '',
+    num: ''
+  });
   const [secondText, setSecondText] = useState({
     checked: false,
     value: ''
@@ -76,8 +87,12 @@ export function useTransform() {
   const onTransform = useCallback(() => {
     const textList = textToTextHtml(descendant as any);
     setTextList(textList);
+    let length = watermark.num;
+    if (!length) {
+      length = Math.ceil(descendant.length / 10) + '';
+    }
     watermarkList.current = Array.from({
-      length: Math.ceil(descendant.length / 20)
+      length: +length
     });
   }, [descendant]);
 
@@ -128,7 +143,15 @@ export function useTransform() {
     });
   };
 
+  const onChangeLogo = (rest: Partial<typeof logo>) => {
+    setLogo({
+      ...logo,
+      ...rest
+    });
+  };
+
   return {
+    logo,
     template,
     descendant,
     textList,
@@ -151,6 +174,7 @@ export function useTransform() {
     onReset,
     onTransform,
     onCopy,
-    onDownload
+    onDownload,
+    onChangeLogo
   };
 }
