@@ -2,7 +2,12 @@ import styles from './index.module.scss';
 import { BaseButton, Checkbox, SelectBox } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { analyzeFiles, generateImg } from './utils';
+import {
+  analyzeFiles,
+  buildFileStructure,
+  generateImg,
+  ItemFile
+} from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { globalStore } from '../../store';
@@ -16,7 +21,7 @@ export interface Item {
   image: string;
 }
 
-const options = [325, 375, 425, 450, 475, 525, 575, 625, 675];
+const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775];
 const OPTIONS = options.map(width => ({
   value: width,
   label: `宽度: ${width}px`
@@ -30,6 +35,7 @@ export default function GeneratePicture() {
   const { files, setFiles } = globalStore();
   const [nameList, setNameList] = useState<Item[]>([]);
   const [dirList, setDirList] = useState<Item[]>([]);
+  const [treeDirList, setTreeDirList] = useState<ItemFile[]>([]);
   const [typeList, setTypeList] = useState<string[]>(['文件夹']);
   const [selectTypeList, setSelectTypeList] = useState<string[]>([
     'mp4',
@@ -42,13 +48,14 @@ export default function GeneratePicture() {
   const [title, setTitle] = useState('');
   const [watermark, setWatermark] = useState({
     name: '',
-    num: 2,
+    num: 2
   });
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [imageWidth, setImageWidth] = useState(450);
   const [isSplitimg, setIsSplitimg] = useState(true);
   const [isThirtDir, setIsThirtDir] = useState(false);
+  const [isTreeDir, setIsTreeDir] = useState(true); // 树结构
 
   const previewOpenRef = useRef(false);
   const cropperRef = useRef<HTMLCanvasElement | null>(null);
@@ -116,7 +123,7 @@ export default function GeneratePicture() {
     setFiles([...files]);
     e.target.value = '';
     toast.success('上传成功');
-    onReset()
+    onReset();
   };
 
   function transform(files: File[]) {
@@ -127,6 +134,8 @@ export default function GeneratePicture() {
     setTypeList(['文件夹', ...info.typeList]);
     setDirList(info.dirList);
     setTitle(info.dirName);
+    setSelectTypeList(['文件夹', ...info.typeList]);
+    setTreeDirList(buildFileStructure(files));
   }
 
   const onDelete = (index: number) => {
@@ -173,13 +182,14 @@ export default function GeneratePicture() {
         setDownloadStatus(false);
       }
     } else if (dataUrl) {
+      console.log('dataUrl ', dataUrl);
       download(dataUrl, '详情.png');
       toast('下载成功');
       setDownloadStatus(false);
     } else {
-      await generateImgUrl();
-      const key = imageWidth + selectTypeList.join('');
-      download(imgSizeMap[key], '详情.png');
+      const dataUrl = await generateImgUrl();
+      // const key = imageWidth + selectTypeList.join('');
+      download(dataUrl!, '详情.png');
       toast('下载成功');
       setDownloadStatus(false);
     }
@@ -225,19 +235,14 @@ export default function GeneratePicture() {
   const generateImgUrl = async () => {
     try {
       const key = imageWidth + selectTypeList.join('');
-      if (!imgSizeMap[key]) {
-        generateImg({
-          width: imageWidth,
-          isSingle: true
-        })
-          .then(dataUrl => {
-            setDataUrl(dataUrl);
-            imgSizeMap[key] = dataUrl;
-          })
-          .catch(e => {
-            console.log('加载失败 ', e);
-          });
-      }
+      if (imgSizeMap[key]) return imgSizeMap[key];
+      const dataUrl = await generateImg({
+        width: imageWidth,
+        isSingle: true
+      });
+      setDataUrl(dataUrl);
+      imgSizeMap[key] = dataUrl;
+      return dataUrl;
     } catch (error) {
       toast.error('加载失败');
     }
@@ -298,6 +303,7 @@ export default function GeneratePicture() {
             <div className="options">
               {typeList.map(type => (
                 <span
+                  key={type}
                   className={selectTypeList.includes(type) ? 'select' : ''}
                   onClick={() => onSelectType(type)}
                 >
@@ -321,19 +327,23 @@ export default function GeneratePicture() {
                   type="text"
                   placeholder="水印"
                   value={watermark.name}
-                  onChange={e => setWatermark({
-                    ...watermark,
-                    name: e.target.value
-                  })}
+                  onChange={e =>
+                    setWatermark({
+                      ...watermark,
+                      name: e.target.value
+                    })
+                  }
                 />
                 <input
                   type="text"
                   placeholder="数量"
                   value={watermark.num}
-                  onChange={e => setWatermark({
-                    ...watermark,
-                    num: +e.target.value
-                  })}
+                  onChange={e =>
+                    setWatermark({
+                      ...watermark,
+                      num: +e.target.value
+                    })
+                  }
                 />
               </div>
             </div>
@@ -345,35 +355,49 @@ export default function GeneratePicture() {
             >
               <AnimatePresence>
                 {watermark.name && (
-                  <div className='watermarkList'>
-                    {
-                      Array.from({length: +watermark.num}).map(_ => <p className="watermark">{watermark.name || '长安不止三万里'}</p>)
-                    }
+                  <div className="watermarkList">
+                    {Array.from({ length: +watermark.num }).map((_, index) => (
+                      <p className="watermark" key={index}>
+                        {watermark.name || '长安不止三万里'}
+                      </p>
+                    ))}
                   </div>
                 )}
                 {title && <p className="imgTitle">{title}</p>}
-                {selectNameList.map((item, index) => (
-                  <motion.li
-                    initial={{ y: -200, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    key={item.name}
-                    className="item"
-                  >
-                    <div className="fileName">
-                      <img src={item.image} alt="" />
-                      {item.name}
-                    </div>
-                    <div
-                      className="delIcon"
-                      onClick={() => onDelete(index)}
-                    ></div>
-                  </motion.li>
-                ))}
+                {isTreeDir ? (
+                  <TreeDirList
+                    treeDirList={treeDirList}
+                    typeList={selectTypeList}
+                  />
+                ) : (
+                  selectNameList.map((item, index) => (
+                    <motion.li
+                      initial={{ y: -200, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      key={item.name}
+                      className="item"
+                    >
+                      <div className="fileName">
+                        <img src={item.image} alt="" />
+                        {item.name}
+                      </div>
+                      <div
+                        className="delIcon"
+                        onClick={() => onDelete(index)}
+                      ></div>
+                    </motion.li>
+                  ))
+                )}
               </AnimatePresence>
             </motion.div>
           </section>
           <section className="right">
+            <Checkbox
+              checked={isTreeDir}
+              onChange={setIsTreeDir}
+              label="文件夹层级格式"
+            ></Checkbox>
             <Checkbox
               checked={isSplitimg}
               onChange={setIsSplitimg}
@@ -429,5 +453,43 @@ export default function GeneratePicture() {
         </div>
       </PreviewModal>
     </>
+  );
+}
+
+function TreeDirList({
+  treeDirList,
+  typeList,
+  index = 0
+}: {
+  treeDirList: ItemFile[];
+  typeList: string[];
+  index?: number;
+}) {
+  return (
+    <div className="treeDirBox" style={{ marginLeft: index * 10 + 'px' }}>
+      {treeDirList
+        ?.filter(item => !!item && (item.dir || typeList.includes(item.suffix)))
+        .map(item => (
+          <div className="item dirItem" key={item.name || item.dir}>
+            {
+              <div
+                className={[
+                  'fileName',
+                  // index > 0 ? 'treeIcon' : '',
+                  item.dir ? 'dirIcon' : ''
+                ].join(' ')}
+              >
+                <img src={item.image} alt="" />
+                {item.name || item.dir}
+              </div>
+            }
+            <TreeDirList
+              treeDirList={item.list}
+              typeList={typeList}
+              index={index + 1}
+            />
+          </div>
+        ))}
+    </div>
   );
 }

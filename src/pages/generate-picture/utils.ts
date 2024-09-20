@@ -40,24 +40,7 @@ export function analyzeFiles(
     const { suffix: fileSuffix } = getFileName(file.webkitRelativePath);
     setType.add(fileSuffix);
 
-    let img = fileImg;
-    if (ZIP.includes(fileSuffix)) {
-      img = zip;
-    } else if (VIDEO.includes(fileSuffix)) {
-      img = video;
-    } else if (VOICE.includes(fileSuffix)) {
-      img = voice;
-    } else if (IMAGE.includes(fileSuffix)) {
-      img = image;
-    } else if (PPT.includes(fileSuffix)) {
-      img = ppt;
-    } else if (PDF.includes(fileSuffix)) {
-      img = pdf;
-    } else if (WORD.includes(fileSuffix)) {
-      img = word;
-    } else if (PSD.includes(fileSuffix)) {
-      img = psd;
-    }
+    let img = getImage(fileSuffix);
     nameList.push({ name: file.name, image: img, suffix: fileSuffix });
 
     // 只处理二三级目录
@@ -84,6 +67,52 @@ export function analyzeFiles(
   };
 }
 
+export interface ItemFile {
+  dir: string;
+  list: ItemFile[];
+  name: string;
+  image: string;
+  suffix: string;
+}
+
+interface ItemMap {
+  [key: string]: ItemMap | null;
+}
+
+export function buildFileStructure(files: File[]) {
+  const map: any = {} as any;
+  files.forEach(file => {
+    const pathParts = file.webkitRelativePath.split('/');
+    let currentLevel = map;
+
+    pathParts.forEach((part, index) => {
+      if (!currentLevel[part]) {
+        currentLevel[part] = index === pathParts.length - 1 ? null : {};
+      }
+      currentLevel = currentLevel[part];
+    });
+  });
+
+  function convertToNestedArray(obj: ItemMap): any[] {
+    return Object.keys(obj).map(key => {
+      if (key === '.DS_Store') return;
+      if (obj[key] === null) {
+        const suffix = key.split('.').pop()?.toLocaleLowerCase()!;
+        return { name: key, image: getImage(suffix!), suffix: suffix };
+      } else {
+        return {
+          dir: key,
+          name: key,
+          image: folder,
+          list: convertToNestedArray(obj[key] as ItemMap)
+        }; // 文件夹
+      }
+    });
+  }
+  return convertToNestedArray(map)[0].list.sort(
+    ObjectNaturalSort
+  ) as ItemFile[];
+}
 // 自然排序函数
 export function ObjectNaturalSort(a: Item, b: Item) {
   const regex = /(\d+|\D+)/g; // 匹配数字和非数字部分
@@ -109,4 +138,26 @@ export async function generateImg({
     quality: 1,
     pixelRatio: 2
   });
+}
+
+function getImage(fileSuffix: string) {
+  let img = fileImg;
+  if (ZIP.includes(fileSuffix)) {
+    img = zip;
+  } else if (VIDEO.includes(fileSuffix)) {
+    img = video;
+  } else if (VOICE.includes(fileSuffix)) {
+    img = voice;
+  } else if (IMAGE.includes(fileSuffix)) {
+    img = image;
+  } else if (PPT.includes(fileSuffix)) {
+    img = ppt;
+  } else if (PDF.includes(fileSuffix)) {
+    img = pdf;
+  } else if (WORD.includes(fileSuffix)) {
+    img = word;
+  } else if (PSD.includes(fileSuffix)) {
+    img = psd;
+  }
+  return img;
 }
