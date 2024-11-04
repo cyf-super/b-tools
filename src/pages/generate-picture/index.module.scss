@@ -329,3 +329,23 @@
     transform: rotate(1turn);
   }
 }
+
+.fileItem {
+  display: flex;
+  flex-direction: column;
+  .name {
+    font-size: 16px;
+  }
+  .fileInfo {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    .timer {
+      color: #e5e5e5;
+      margin-right: 10px;
+    }
+    .size {
+      color: #e5e5e5;
+    }
+  }
+}

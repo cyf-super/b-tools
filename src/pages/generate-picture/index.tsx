@@ -19,6 +19,8 @@ export interface Item {
   name: string;
   suffix: string;
   image: string;
+  size?: string;
+  timer?: string;
 }
 
 const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775];
@@ -56,6 +58,8 @@ export default function GeneratePicture() {
   const [isSplitimg, setIsSplitimg] = useState(true);
   const [isThirtDir, setIsThirtDir] = useState(false);
   const [isTreeDir, setIsTreeDir] = useState(true); // 树结构
+  const [showSize, setShowSize] = useState(true); // 树结构
+  const [showTimer, setShowTimer] = useState(true); // 树结构
 
   const previewOpenRef = useRef(false);
   const cropperRef = useRef<HTMLCanvasElement | null>(null);
@@ -120,6 +124,7 @@ export default function GeneratePicture() {
     setFiles([]);
 
     if (!files) return;
+    console.log('files ', [...files]);
     setFiles([...files]);
     e.target.value = '';
     toast.success('上传成功');
@@ -380,7 +385,12 @@ export default function GeneratePicture() {
                     >
                       <div className="fileName">
                         <img src={item.image} alt="" />
-                        {item.name}
+                        <FileItem
+                          item={item}
+                          showSize={showSize}
+                          showTime={showTimer}
+                        ></FileItem>
+                        <div>{item.name}</div>
                       </div>
                       <div
                         className="delIcon"
@@ -407,6 +417,16 @@ export default function GeneratePicture() {
               checked={isThirtDir}
               onChange={setIsThirtDir}
               label="只针对二级目录"
+            ></Checkbox>
+            <Checkbox
+              checked={showSize}
+              onChange={setShowSize}
+              label="展示大小"
+            ></Checkbox>
+            <Checkbox
+              checked={showTimer}
+              onChange={setShowTimer}
+              label="展示时间"
             ></Checkbox>
             <SelectBox
               value={imageWidth}
@@ -490,6 +510,28 @@ function TreeDirList({
             />
           </div>
         ))}
+    </div>
+  );
+}
+
+function FileItem({
+  item,
+  showSize,
+  showTime
+}: {
+  item: Item;
+  showSize: boolean;
+  showTime: boolean;
+}) {
+  return (
+    <div className={styles.fileItem}>
+      <div className={styles.name}>{item.name}</div>
+      {(showSize || showTime) && (
+        <div className={styles.fileInfo}>
+          {showTime && <span className={styles.timer}>{item.timer}</span>}
+          {showSize && <span className={styles.size}>{item.size}</span>}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,17 @@
 import { toPng } from 'html-to-image';
-import { IMAGE, PDF, PPT, PSD, VIDEO, VOICE, WORD, ZIP, sort } from '@/utils';
+import {
+  IMAGE,
+  PDF,
+  PPT,
+  PSD,
+  VIDEO,
+  VOICE,
+  WORD,
+  ZIP,
+  formatBytes,
+  formatTime,
+  sort
+} from '@/utils';
 import { Item } from '.';
 import { naturalSort } from '../file-analyze/utils';
 import image from './img/image.png';
@@ -41,7 +53,13 @@ export function analyzeFiles(
     setType.add(fileSuffix);
 
     let img = getImage(fileSuffix);
-    nameList.push({ name: file.name, image: img, suffix: fileSuffix });
+    nameList.push({
+      name: file.name,
+      image: img,
+      suffix: fileSuffix,
+      size: formatBytes(file.size),
+      timer: formatTime(file.lastModified, 'yyyy-MM-dd HH:mm')
+    });
 
     // 只处理二三级目录
     const dirArr = file.webkitRelativePath.split('/');
