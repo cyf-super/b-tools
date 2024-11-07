@@ -21,6 +21,7 @@ export interface Item {
   image: string;
   size?: string;
   timer?: string;
+  dir?: string
 }
 
 const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775];
@@ -373,6 +374,8 @@ export default function GeneratePicture() {
                   <TreeDirList
                     treeDirList={treeDirList}
                     typeList={selectTypeList}
+                    showSize={showSize}
+                    showTimer={showTimer}
                   />
                 ) : (
                   selectNameList.map((item, index) => (
@@ -384,13 +387,13 @@ export default function GeneratePicture() {
                       className="item"
                     >
                       <div className="fileName">
-                        <img src={item.image} alt="" />
+                        <img style={{height: (showSize || showTimer) ? '24px' : '16px'}} src={item.image} alt="" />
                         <FileItem
                           item={item}
                           showSize={showSize}
                           showTime={showTimer}
                         ></FileItem>
-                        <div>{item.name}</div>
+                        {/* <div>{item.name}</div> */}
                       </div>
                       <div
                         className="delIcon"
@@ -479,11 +482,15 @@ export default function GeneratePicture() {
 function TreeDirList({
   treeDirList,
   typeList,
+  showTimer,
+  showSize,
   index = 0
 }: {
   treeDirList: ItemFile[];
   typeList: string[];
   index?: number;
+  showTimer: boolean
+  showSize: boolean
 }) {
   return (
     <div className="treeDirBox" style={{ marginLeft: index * 10 + 'px' }}>
@@ -500,13 +507,20 @@ function TreeDirList({
                 ].join(' ')}
               >
                 <img src={item.image} alt="" />
-                {item.name || item.dir}
+                <FileItem
+                  item={item}
+                  showSize={showSize}
+                  showTime={showTimer}
+                ></FileItem>
+                {/* {item.name || item.dir} */}
               </div>
             }
             <TreeDirList
               treeDirList={item.list}
               typeList={typeList}
               index={index + 1}
+              showSize={showSize}
+              showTimer={showTimer}
             />
           </div>
         ))}
@@ -525,7 +539,7 @@ function FileItem({
 }) {
   return (
     <div className={styles.fileItem}>
-      <div className={styles.name}>{item.name}</div>
+      <div className={styles.name}>{item.name || item.dir}</div>
       {(showSize || showTime) && (
         <div className={styles.fileInfo}>
           {showTime && <span className={styles.timer}>{item.timer}</span>}

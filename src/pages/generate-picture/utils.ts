@@ -58,7 +58,7 @@ export function analyzeFiles(
       image: img,
       suffix: fileSuffix,
       size: formatBytes(file.size),
-      timer: formatTime(file.lastModified, 'yyyy-MM-dd HH:mm')
+      timer: formatTime(file.lastModified, 'yyyy-MM-dd')
     });
 
     // 只处理二三级目录

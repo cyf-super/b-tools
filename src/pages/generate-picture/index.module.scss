@@ -148,11 +148,11 @@
           align-items: center;
           flex-wrap: wrap;
           width: 96%;
-          height: 30px;
+          // height: 30px;
           padding-inline: 15px 10px;
           border-radius: 5px;
-          margin: 5px 0;
-          font-size: 16px;
+          margin: 18px 0;
+          // font-size: 16px;
           text-overflow: ellipsis;
           overflow: hidden;
           word-break: break-all;
@@ -164,7 +164,7 @@
             flex-wrap: wrap;
             img {
               height: 16px;
-              margin-right: 7px;
+              margin-right: 16px;
             }
           }
           &:hover {
@@ -334,18 +334,19 @@
   display: flex;
   flex-direction: column;
   .name {
-    font-size: 16px;
+    font-size: 14px;
   }
   .fileInfo {
     display: flex;
     align-items: center;
-    margin-top: 5px;
+    font-size: 13px;
+    line-height: 17px;
     .timer {
-      color: #e5e5e5;
+      color: #afaeae;
       margin-right: 10px;
     }
     .size {
-      color: #e5e5e5;
+      color: #afaeae;
     }
   }
 }
