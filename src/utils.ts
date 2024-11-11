@@ -69,7 +69,7 @@ export function getBase64ImageSize(base64: string) {
 }
 
 const SIZE = 1024;
-const SIZE_UNIT = ['B', 'K', 'MB', 'GB', 'TB'];
+const SIZE_UNIT = ['B', 'KB', 'MB', 'GB', 'TB'];
 
 /**
  * 将文件大小转化为 KB，MB，GB 等

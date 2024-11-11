@@ -21,7 +21,7 @@ export interface Item {
   image: string;
   size?: string;
   timer?: string;
-  dir?: string
+  dir?: string;
 }
 
 const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775];
@@ -353,12 +353,7 @@ export default function GeneratePicture() {
                 />
               </div>
             </div>
-            <motion.div
-              layout
-              layoutId={'list'}
-              className="list-container"
-              id="list"
-            >
+            <motion.div className="list-container" id="list">
               <AnimatePresence>
                 {watermark.name && (
                   <div className="watermarkList">
@@ -379,15 +374,15 @@ export default function GeneratePicture() {
                   />
                 ) : (
                   selectNameList.map((item, index) => (
-                    <motion.li
-                      initial={{ y: -200, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      key={item.name}
-                      className="item"
-                    >
+                    <motion.li key={item.name} className="item">
                       <div className="fileName">
-                        <img style={{height: (showSize || showTimer) ? '24px' : '16px'}} src={item.image} alt="" />
+                        <img
+                          style={{
+                            height: showSize || showTimer ? '26px' : '16px'
+                          }}
+                          src={item.image}
+                          alt=""
+                        />
                         <FileItem
                           item={item}
                           showSize={showSize}
@@ -489,8 +484,8 @@ function TreeDirList({
   treeDirList: ItemFile[];
   typeList: string[];
   index?: number;
-  showTimer: boolean
-  showSize: boolean
+  showTimer: boolean;
+  showSize: boolean;
 }) {
   return (
     <div className="treeDirBox" style={{ marginLeft: index * 10 + 'px' }}>

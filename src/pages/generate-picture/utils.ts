@@ -72,7 +72,12 @@ export function analyzeFiles(
       }
       const flag = dirList.some(item => dir === item.name);
       if (!flag && dir) {
-        dirList.push({ name: dir, image: folder, suffix: 'dir' });
+        dirList.push({
+          name: dir,
+          image: folder,
+          suffix: 'dir',
+          timer: formatTime(file.lastModified, 'yyyy-MM-dd')
+        });
       }
     }
   });
