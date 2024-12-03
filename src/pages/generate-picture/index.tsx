@@ -50,8 +50,8 @@ export default function GeneratePicture() {
   const [dataUrl, setDataUrl] = useState('');
   const [title, setTitle] = useState('');
   const [watermark, setWatermark] = useState({
-    name: '',
-    num: 2
+    name: '长安不止三万里',
+    num: 10
   });
 
   const [previewOpen, setPreviewOpen] = useState(false);
