@@ -15,6 +15,7 @@ export default function FileAnalyze() {
   const [imgDir, setImgDir] = useState<string[]>([]);
   const [textDir, setTextDir] = useState<string[]>([]);
   const [zipDir, setZipDir] = useState<string[]>([]);
+  const [dirname, setDirname] = useState<string>('');
 
   const [suffix, setSuffix] = useState(true);
   const [onlyDir, setOnlyDir] = useState(false);
@@ -72,7 +73,7 @@ export default function FileAnalyze() {
       isDir: onlyDir,
       isAddSubDir: subDir
     });
-    console.log('info ', info);
+    setDirname(info.dirName)
     setNameList(info.nameList);
     setTypeList(info.typeList);
     setImgDir(info.imgDir);
@@ -87,7 +88,7 @@ export default function FileAnalyze() {
       copyText += name + '\n';
     });
     copyText +=
-      '\n上面是一个视频教程的目录，你是一个顶级的产品专家和营销专家，帮我总结一下大致内容，要求：分点总结，简单易懂，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球，可以有多种风格，比如幽默、励志、文艺风等等';
+      `\n上面是一个“${dirname}”视频教程的目录，你是一个顶级的产品专家和营销专家，帮我总结一下大致内容，要求：分点总结，简单易懂，创意新颖； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球，可以有多种风格，比如幽默、励志、文艺风等等`;
     try {
       await navigator.clipboard.writeText(copyText);
       toast.success('已复制');

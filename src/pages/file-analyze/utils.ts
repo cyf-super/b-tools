@@ -70,6 +70,7 @@ export function analyzeFiles(
   });
 
   return {
+    dirName: files[0].webkitRelativePath.split('/')[0],
     nameList: nameList.sort(naturalSort),
     typeList: [...setType].sort(naturalSort),
     urlDir: urlDir.sort(naturalSort),
