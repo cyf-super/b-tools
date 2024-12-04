@@ -121,12 +121,16 @@ export function useTransform() {
 
   const onDownload = async () => {
     setIsDownloading(true);
-    const base64 = await generateImg({
-      width: 350,
-      nodeId: 'detailList'
-    });
-    download(base64, '详情.png');
-    toast('下载成功');
+    try {
+      const base64 = await generateImg({
+        width: 350,
+        nodeId: 'detailList'
+      });
+      download(base64, '详情.png');
+      toast('下载成功');
+    } catch (error) {
+      console.log(error)
+    }
     setIsDownloading(false);
   };
 

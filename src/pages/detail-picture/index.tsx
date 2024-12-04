@@ -78,13 +78,14 @@ export default function DetailPicture() {
             id="detailList"
             style={{ background: template.background }}
           >
-            <img
+            {/* <img
               src={`/b-tools/templateLogo/logo${logo.id}.png`}
               className="templateLogo"
               alt=""
               style={{ opacity: logo.opacity }}
-            />
-            <div className="watermarkList">
+              id="img"
+            /> */}
+            <div className="watermarkList" id="watermarkList">
               {watermarkList.current.map(_ => (
                 <div className="watermarkText">
                   {watermark.text || '长安不止三万里'}
