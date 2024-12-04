@@ -7,7 +7,7 @@ import Template from './template.json';
 
 export default function DetailPicture() {
   const {
-    logo,
+    // logo,
     template,
     editorRef,
     descendant,
