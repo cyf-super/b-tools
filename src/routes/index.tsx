@@ -7,6 +7,7 @@ const FileAnalyze = React.lazy(() => import('../pages/file-analyze'));
 const GeneratePicture = React.lazy(() => import('../pages/generate-picture'));
 const SlicePicture = React.lazy(() => import('../pages/slice-picture'));
 const DetailPicture = React.lazy(() => import('../pages/detail-picture'));
+// const MergePicture = React.lazy(() => import('../pages/merge-picture'));
 
 const router = createHashRouter([
   {
@@ -29,7 +30,11 @@ const router = createHashRouter([
       {
         path: 'slice-picture',
         element: <SlicePicture />
-      }
+      },
+      // {
+      //   path: 'merge-picture',
+      //   element: <MergePicture />
+      // }
     ]
   }
 ]);

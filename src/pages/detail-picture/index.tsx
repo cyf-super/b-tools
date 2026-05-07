@@ -105,19 +105,23 @@ export default function DetailPicture() {
                   className="detailList"
                   style={{ background: template.textListBackground }}
                 >
-                  {item.detailList.map((detail, i) => (
-                    <div
-                      className="text"
-                      style={{
-                        ...textStyle
-                      }}
-                    >
-                      {secondText.checked
-                        ? secondText.value
-                        : `${index + 1}.${i + 1} `}
-                      {detail.text}
-                    </div>
-                  ))}
+                  {item.detailList.map((detail, i) => {
+                    const detailAr = detail.text.split('：')
+                    return <div
+                    className="text"
+                    style={{
+                      ...textStyle
+                    }}
+                  >
+                    <span>
+                    {secondText.checked
+                      ? secondText.value
+                      : `${index + 1}.${i + 1} `}
+                    </span>
+                    {detailAr.length > 1 && <span>{detailAr[0]}：</span>}
+                    {detailAr.length > 1 ? detailAr.slice(1).join("：") : detailAr.join("：")}
+                  </div>
+                  })}
                 </div>
               </div>
             ))}

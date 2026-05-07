@@ -24,7 +24,7 @@ export interface Item {
   dir?: string;
 }
 
-const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775];
+const options = [325, 375, 425, 450, 475, 525, 575, 625, 675, 725, 750, 775, 825, 875, 975, 1075];
 const OPTIONS = options.map(width => ({
   value: width,
   label: `宽度: ${width}px`

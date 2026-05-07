@@ -26,6 +26,11 @@ const linkList = [
     name: 'Slice Picture',
     image: fileAnalyzeSrc,
     router: '/slice-picture'
+  },
+  {
+    name: 'Merge Picture',
+    image: fileAnalyzeSrc,
+    router: '/merge-picture'
   }
 ];
 

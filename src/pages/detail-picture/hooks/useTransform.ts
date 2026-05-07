@@ -41,9 +41,9 @@ export function useTransform() {
 
   const [nameStyle, setNameStyle] = useState<StyleType>({
     fontWeight: 700,
-    fontFamily: '正文宋楷',
-    fontSize: '19px',
-    color: '#333'
+    fontFamily: '思源黑体',
+    fontSize: '20px',
+    color: 'rgb(51 96 246)'
   });
   const [textStyle, setTextStyle] = useState<StyleType>({
     fontWeight: 400,
@@ -123,7 +123,7 @@ export function useTransform() {
     setIsDownloading(true);
     try {
       const base64 = await generateImg({
-        width: 350,
+        width: 450,
         nodeId: 'detailList'
       });
       download(base64, '详情.png');

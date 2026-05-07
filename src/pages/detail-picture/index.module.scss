@@ -69,7 +69,7 @@
         background: #fff;
         padding: 4px 16px 12px;
         border-radius: 8px;
-        width: 350px;
+        width: 450px;
         height: fit-content;
         font-family: '正文宋楷';
         .templateLogo {
@@ -100,13 +100,17 @@
           .name {
             font-size: 19px;
             font-weight: 700;
-            margin-top: 2px;
+            margin-top: 12px;
+            color: #8aa4fc;
           }
           .detailList {
             padding-top: 2px;
             .text {
               font-size: 18px;
               margin: 0 0 0px 18px;
+              span {
+                font-weight: 700;
+              }
             }
           }
         }
