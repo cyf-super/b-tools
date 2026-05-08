@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
-export { Button } from './Editor/Button/index';
+export { Button } from '@/components/Editor/Button/index';
 // eslint-disable-next-line import/named
-export { Icon } from './Editor/Icon/index';
+export { Icon } from '@/components/Editor/Icon/index';
 // eslint-disable-next-line import/named
-export { Toolbar } from './Editor/Toolbar/index';
+export { Toolbar } from '@/components/Editor/Toolbar/index';
 // eslint-disable-next-line import/named
-export { BaseButton } from './Base/Button/index';
+export { BaseButton } from '@/components/Base/Button/index';
 // eslint-disable-next-line import/named
-export { Checkbox } from './Base/checkBox';
+export { Checkbox } from '@/components/Base/checkBox';
 // eslint-disable-next-line import/named
-export { SelectBox } from './Base/SelectBox';
+export { SelectBox } from '@/components/Base/SelectBox';
