@@ -21,7 +21,8 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "*": ["node_modules/*", "src/types/*"]
     }
   },
   "include": ["src/*"],
