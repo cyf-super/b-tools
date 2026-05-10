@@ -15,7 +15,7 @@ import {
   BaseEditor
 } from 'slate';
 import { Icon, Toolbar } from '@/components';
-import './style.module.scss';
+import './style.css';
 
 const HOTKEYS = {
   'mod+b': 'bold',
