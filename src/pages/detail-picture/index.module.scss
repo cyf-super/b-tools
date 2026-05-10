@@ -3,26 +3,31 @@
   border: 1px solid var(--btnColor);
   color: #fff;
 }
+
 // Ma Shan Zheng
-@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
 
 /* 定义字体类型 */
 @font-face {
   font-family: '正文宋楷';
   src: url('/font/正文宋楷.woff2') format('truetype');
 }
+
 @font-face {
   font-family: '江南手书';
   src: url('/font/江南手书.woff2') format('woff2');
 }
+
 @font-face {
   font-family: '创粗黑';
   src: url('/font/创粗黑.woff2') format('truetype');
 }
+
 @font-face {
   font-family: '方方先锋体';
   src: url('/font/方方先锋体.woff2') format('truetype');
 }
+
 @font-face {
   font-family: '御守锦书';
   src: url('/font/御守锦书.woff2') format('woff2');
@@ -34,6 +39,7 @@
   :global {
     .editor {
       display: flex;
+
       .left {
         width: 60%;
       }
@@ -50,6 +56,7 @@
       &-texthtml {
         @include primary;
       }
+
       &-small {
         width: 90px;
         height: 40px;
@@ -59,10 +66,12 @@
     .content {
       display: flex;
       margin: 24px 0;
+
       .header {
         width: 100%;
         height: 27.72px;
       }
+
       .textList {
         position: relative;
         box-sizing: border-box;
@@ -72,11 +81,13 @@
         width: 450px;
         height: fit-content;
         font-family: '正文宋楷';
+
         .templateLogo {
           position: absolute;
           right: 0;
           top: 0;
         }
+
         .watermarkList {
           position: absolute;
           top: 0;
@@ -87,6 +98,7 @@
           flex-direction: column;
           align-items: center;
           justify-content: space-around;
+
           .watermarkText {
             font-family: '清平手书';
             font-size: 35px;
@@ -94,20 +106,25 @@
             transform: rotate(345deg);
           }
         }
+
         .item {
           position: relative;
           z-index: 2;
+
           .name {
             font-size: 19px;
             font-weight: 700;
             margin-top: 12px;
             color: #8aa4fc;
           }
+
           .detailList {
             padding-top: 2px;
+
             .text {
               font-size: 18px;
               margin: 0 0 0px 18px;
+
               span {
                 font-weight: 700;
               }
@@ -115,43 +132,54 @@
           }
         }
       }
+
       .options {
         margin: 10px 0 0 40px;
         font-size: 18px;
+
         .font {
           display: flex;
+
           .textStyle {
             margin-left: 44px;
+
             .editIndex {
               display: flex;
               align-items: center;
               margin-top: 10px;
+
               .textInput {
                 width: 60px;
                 margin-top: 10px;
               }
             }
           }
+
           .colorSelect {
             margin: 12px 0 0 22px;
           }
         }
+
         .watermarkEdit {
           margin-top: 24px;
           display: flex;
           align-items: center;
+
           .num {
             margin-left: 20px;
           }
+
           .numInput {
             width: 100px;
           }
         }
+
         .logoEdit {
           .gridLogos {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             grid-gap: 12px;
+
             .emptyLogo {
               width: 50px;
               height: 50px;
@@ -159,15 +187,18 @@
               line-height: 50px;
               border: 1px solid #8aa4fc;
               border-radius: 8px;
+
               &:hover {
                 transform: scale(1.1);
                 cursor: pointer;
               }
             }
+
             img {
               width: 50px;
               border: 0.5px solid #e1dede;
               border-radius: 8px;
+
               &:hover {
                 transform: scale(1.1);
                 cursor: pointer;
@@ -175,10 +206,13 @@
             }
           }
         }
+
         .templates {
           margin-top: 16px;
+
           .templateList {
             display: flex;
+
             .template {
               margin-right: 12px;
               width: 120px;
@@ -186,6 +220,7 @@
               border-radius: 8px;
               cursor: pointer;
             }
+
             .selectTemplate {
               border: 1px solid #a1c6f6;
               box-shadow: 0px 0px 6px 0px #d4d3ff;
@@ -206,6 +241,7 @@ input[type='text'] {
   padding-inline: 5px;
   font-size: 16px;
   margin-left: 10px;
+
   &::placeholder {
     color: #dcdcdc;
   }
