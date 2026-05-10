@@ -108,19 +108,19 @@ export default function DetailPicture() {
                   {item.detailList.map((detail, i) => {
                     const detailAr = detail.text.split('：')
                     return <div
-                    className="text"
-                    style={{
-                      ...textStyle
-                    }}
-                  >
-                    <span>
-                    {secondText.checked
-                      ? secondText.value
-                      : `${index + 1}.${i + 1} `}
-                    </span>
-                    {detailAr.length > 1 && <span>{detailAr[0]}：</span>}
-                    {detailAr.length > 1 ? detailAr.slice(1).join("：") : detailAr.join("：")}
-                  </div>
+                      className="text"
+                      style={{
+                        ...textStyle
+                      }}
+                    >
+                      <span>
+                        {secondText.checked
+                          ? secondText.value
+                          : `${index + 1}.${i + 1} `}
+                      </span>
+                      {detailAr.length > 1 && <span>{detailAr[0]}：</span>}
+                      {detailAr.length > 1 ? detailAr.slice(1).join("：") : detailAr.join("：")}
+                    </div>
                   })}
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function DetailPicture() {
               <div className="gridLogos">
                 {LogoTemplate.map(id => (
                   <img
-                    src={`/b-tools/templateLogo/logo${id}.png`}
+                    src={`/templateLogo/logo${id}.png`}
                     onClick={() => onChangeLogo({ id })}
                   />
                 ))}
