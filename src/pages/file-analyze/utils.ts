@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { HREF, IMAGE, ZIP, sort } from '@/utils';
 
 export function getFileName(webkitRelativePath: string) {
@@ -87,3 +88,23 @@ export function naturalSort(a: string, b: string) {
   const partsB = b.match(regex)!;
   return sort(partsA, partsB);
 }
+
+
+export function copyToClipboardFallback(text: string): void {
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      console.log('文本已成功复制到剪贴板');
+      toast.success('已复制')
+    } catch (error) {
+      console.error('Failed to copy: ', error);
+      toast.error('复制失败');
+    }
+}
+
+// 使用示例
+copyToClipboardFallback('要复制的文本');

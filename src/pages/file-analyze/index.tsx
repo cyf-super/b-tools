@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import { BaseButton, Checkbox } from '@/components';
 import uploadImg from './img/upload.png';
 import { useState, ChangeEvent, useRef, useEffect } from 'react';
-import { analyzeFiles } from './utils';
+import { analyzeFiles, copyToClipboardFallback } from './utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { globalStore } from '../../store';
@@ -89,13 +89,7 @@ export default function FileAnalyze() {
     });
     copyText +=
       `\n上面是一个“${dirname}”视频教程的目录，你是一个顶级的产品专家和营销专家，请根据目录帮我总结一下教程的大致内容，要求：分点总结，简单易懂，创意新颖, 最多二级缩进； 最后再根据这个教程的主题给出10句吸引用户的宣传语/营销语，同样要求有创意，能抓住用户眼球，可以有多种风格，比如幽默、励志、文艺风等等`;
-    try {
-      await navigator.clipboard.writeText(copyText);
-      toast.success('已复制');
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-      toast.error('复制失败');
-    }
+    copyToClipboardFallback(copyText)
   };
 
   const onDelete = (index: number) => {
